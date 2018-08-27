@@ -24,19 +24,20 @@ import org.springframework.util.Assert;
 import com.go2wheel.weblizedutil.controller.ControllerBase;
 import com.go2wheel.weblizedutil.model.KeyValue;
 import com.go2wheel.weblizedutil.service.KeyValueDbService;
+import com.go2wheel.weblizedutil.value.KeyValueProperties;
 import com.go2wheel.weblizedutil.yml.YamlInstance;
 
 @Component
 public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 
 	private ApplicationContext applicationContext;
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	List<MainMenuGroup> groups = new ArrayList<>();
 
 	private boolean cloned = false;
-	
+
 	@Autowired
 	private KeyValueDbService keyValueDbService;
 
@@ -51,7 +52,8 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 	public MainMenuGroups clone(Collection<? extends GrantedAuthority> gas) {
 		MainMenuGroups mgps = new MainMenuGroups();
 		mgps.cloned = true;
-		List<MainMenuGroup> clonedGroups = getGroups().stream().map(g -> g.customizeFromOrigin(gas)).collect(Collectors.toList());
+		List<MainMenuGroup> clonedGroups = getGroups().stream().map(g -> g.customizeFromOrigin(gas))
+				.collect(Collectors.toList());
 		Collections.sort(clonedGroups);
 		mgps.setGroups(clonedGroups);
 		return mgps;
@@ -85,16 +87,35 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 	@PostConstruct
 	public void after() {
 		// add groupName to menu-item in application.properties file.
-		
-//		menus.groups[0].name=g2
-//		menus.groups[0].order=1000
-//		menus.groups[0].items[0].name=menu.home
-//		menus.groups[0].items[0].order=1
-//		menus.groups[0].items[0].path=/
-		
-		List<KeyValue> groupsIndb = keyValueDbService.findManyByKeyPrefix("");
-		
-		
+
+		// menus.groups[0].name=g2
+		// menus.groups[0].order=1000
+		// menus.groups[0].items[0].name=menu.home
+		// menus.groups[0].items[0].order=1
+		// menus.groups[0].items[0].path=/
+
+		List<KeyValue> groupsIndb = keyValueDbService.findManyByKeyPrefix("menus");
+
+		List<KeyValueProperties> kvl = new KeyValueProperties(groupsIndb, "").getListOfKVP("groups");
+
+		this.groups = kvl.stream().map(kvp -> {
+			MainMenuGroup mg = new MainMenuGroup();
+			mg.setName(kvp.getProperty("name"));
+			List<KeyValueProperties> mikvl = kvp.getListOfKVP("items");
+			
+			List<MainMenuItem> mis = mikvl.stream().map(mikvp -> {
+				MainMenuItem mi = new MainMenuItem();
+				mi.setName(mikvp.getProperty("name"));
+				mi.setOrder(mikvp.getInteger("order"));
+				mi.setPath(mikvp.getProperty("path"));
+				mi.setGroupName(mg.getName());
+				return mi;
+			}).collect(Collectors.toList());
+			mg.setOrder(kvp.getInteger("order"));
+			mg.setItems(mis);
+			return mg;
+		}).collect(Collectors.toList());
+
 		getGroups().forEach(g -> {
 			g.getItems().forEach(it -> {
 				it.setGroupName(g.getName());
@@ -103,7 +124,7 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 				}
 			});
 		});
-		
+
 		Map<String, ? extends ControllerBase> cbs = applicationContext.getBeansOfType(ControllerBase.class);
 		cbs.values().stream().map(cb -> cb.getMenuItems()).filter(Objects::nonNull).flatMap(mis -> mis.stream())
 				.map(mi -> {
@@ -121,13 +142,13 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 					}
 					mgOp.get().getItems().add(mi);
 				});
-		
+
 		// remove duplication items.
 		getGroups().forEach(g -> {
 			Map<String, List<MainMenuItem>> m = g.getItems().stream().collect(Collectors.groupingBy(mi -> {
 				return mi.getName();
 			}));
-			
+
 			List<MainMenuItem> lm = m.values().stream().map(list -> list.get(0)).collect(Collectors.toList());
 			Collections.sort(lm);
 			g.setItems(lm);

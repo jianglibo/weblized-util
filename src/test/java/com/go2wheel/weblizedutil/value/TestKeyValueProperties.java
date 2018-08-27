@@ -76,13 +76,26 @@ public class TestKeyValueProperties {
 				new KeyValue("menus.groups[0].order", "1000"),
 				new KeyValue("menus.groups[0].items[0].name", "menu.home"),
 				new KeyValue("menus.groups[0].items[0].order", "1"),
-				new KeyValue("menus.groups[0].items[0].path", "/")
+				new KeyValue("menus.groups[0].items[0].path", "/"),
+				new KeyValue("menus.groups[1].name", "g3"),
+				new KeyValue("menus.groups[1].order", "1001"),
+				new KeyValue("menus.groups[1].items[0].name", "menu.home1"),
+				new KeyValue("menus.groups[1].items[0].order", "2"),
+				new KeyValue("menus.groups[1.items[0].path", "//")
 				);
 		KeyValueProperties kvp = new KeyValueProperties(kvs, "");
 		
 		List<KeyValueProperties> kvl = kvp.getListOfKVP("menus.groups");
 		
-//		assertThat(gs.size(), equalTo(1));
+		assertThat(kvl.size(), equalTo(2));
+		
+		assertThat(kvl.get(0).getProperty("name"), equalTo("g2"));
+		assertThat(kvl.get(1).getProperty("name"), equalTo("g3"));
+		
+		kvl = kvl.get(0).getListOfKVP("items");
+		
+		assertThat(kvl.size(), equalTo(1));
+		assertThat(kvl.get(0).getProperty("name"), equalTo("menu.home"));
 	}
 	
 	
