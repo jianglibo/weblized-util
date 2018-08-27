@@ -1,0 +1,12 @@
+{
+    "files": [
+        "src/main.tsx"
+    ],
+    "compilerOptions": {
+        "jsx" : "react",
+        "noImplicitAny": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "es2015",
+        "types": ["jest"]
+    }
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html th:replace="~{layout :: layout(~{::title}, ~{},  ~{::div.header}, ~{::div.content}, ~{::script})}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>MYSQL設置列表</title>
+</head>
+
+<body>
+	<div id="layout">
+		<div id="main">
+			<div class="header">
+				<h1 th:text="BORG本地仓库列表"></h1>
+			</div>
+			<div class="content">
+				<aside class="success" th:if="${deleteResult}">
+					<p th:text="${deleteResult}">修改成功。</p>
+				</aside>
+				<div id="action-menu-bar"></div>
+				<table class="pure-table pure-table-bordered item-list">
+					<thead>
+						<tr>
+							<th>
+								<input id="item-list-check-all" th:id="item-list-check-all" type="checkbox">
+							</th>
+							<th>仓库名称</th>
+							<th>最后访问时间</th>
+							<th>仓库容量(非解压后)</th>
+						</tr>
+					</thead>
+
+					<tbody th:remove="all-but-first">
+						<tr th:each="item: ${listItems}">
+							<td>
+								<input id="particular-item" th:id="|item-${item.getRepoFolderName()}|" type="checkbox">
+							</td>
+							<td th:text="${item.getRepoFolderName()}">name</td>
+							<td th:text="${item.getCreateTime()}">Accord</td>
+							<td th:text="${item.getSize()}">2009</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>Toyota</td>
+							<td>Camry</td>
+							<td>2012</td>
+						</tr>
+
+						<tr>
+							<td>3</td>
+							<td>Hyundai</td>
+							<td>Elantra</td>
+							<td>2010</td>
+						</tr>
+					</tbody>
+				</table>
+
+			</div>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+		var mapping = /*[[${mapping}]]*/ "/app/listItems";
+		var ruri = /*[[${#request.getRequestURI()}]]*/ "/requestURI";
+		window.freact.renderActionMenuBar(mapping,
+			".item-list",
+			["edit", "delete", {
+				actionId: 'repo-restore',
+				name: '回放',
+				activeOn: 'SINGLE',
+				onClick: function() {
+					var id = this.state.selectedItems[0].id;
+					window.freact.formUtil.createFormSubmit({action: ruri, method: 'POST'}, {repo: id});
+				}
+			}]);
+	</script>
+</body>
+
+</html>

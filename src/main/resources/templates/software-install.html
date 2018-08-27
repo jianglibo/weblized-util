@@ -1,0 +1,107 @@
+<!doctype html>
+<html th:replace="~{layout :: layout(~{::title}, ~{},  ~{::div.header}, ~{::div.content}, ~{::script})}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>安装程序</title>
+</head>
+
+<body>
+	<div id="layout">
+		<div id="main">
+			<div class="header">
+				<h1 th:text="|安装程序-${server.name}|">安装程序</h1>
+			</div>
+			<div class="content">
+				<aside class="success" th:if="${formProcessSuccessed}">
+					<p th:text="${formProcessSuccessed}">修改成功。</p>
+				</aside>
+				<form class="pure-form install-software-form" method="POST" action="/app/software-install" th:action="@{/app/software-install/{server}(server=${server.id})}">
+					<fieldset>
+						<legend>安装程序</legend>
+						<select th:remove="all-but-first" name="software">
+							<option th:each="one : ${softwares}" th:value="${one.id}" th:text="|${one.name}-${one.version}-${one.targetEnv}|" th:selected="${one.id} == ${software.id}">AL</option>
+							<option>CA</option>
+							<option>IL</option>
+						</select>
+
+						<button type="submit" class="pure-button pure-button-primary">安装</button>
+						<p>其它安装所需的参数：</p>
+						<div class="pure-control-group" th:each="kv : ${software.getSettingsMap()}">
+							<label for="" th:for="${kv.getKey()}" th:text="${kv.getKey()}">SSH_KEY_FILE</label>
+							<input th:name="${kv.getKey()}" type="text" th:value="${kv.getValue()}" placeholder="">
+							<span class="pure-form-message-inline"></span>
+						</div>
+					</fieldset>
+				</form>
+
+				<div id="action-menu-bar"></div>
+				<table class="pure-table pure-table-bordered item-list">
+					<thead>
+						<tr>
+							<th>
+								<input id="item-list-check-all" th:id="item-list-check-all" type="checkbox">
+							</th>
+							<th>名称</th>
+							<th>版本</th>
+							<th>环境</th>
+						</tr>
+					</thead>
+
+					<tbody th:remove="all-but-first">
+						<tr th:each="item: ${listItems}">
+							<td>
+								<input id="particular-item" th:id="|item-${item.id}|" type="checkbox">
+							</td>
+							<td th:text="${item.name}">Honda</td>
+							<td th:text="${item.version}">Accord</td>
+							<td th:text="${item.targetEnv}">Accord</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>Toyota</td>
+							<td>Camry</td>
+							<td>Camry</td>
+						</tr>
+
+						<tr>
+							<td>3</td>
+							<td>Hyundai</td>
+							<td>Elantra</td>
+							<td>Elantra</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+		var server = /*[[${server.id}]]*/ 0;
+		jQuery('.install-software-form').on('change', function (e) {
+			var id = jQuery(e.target).val();
+			window.location.href = "/app/software-install/" + server + "?software=" + id;
+		});
+
+		window.freact.renderActionMenuBar("/app/software-install",
+			".item-list",
+			[{
+				actionId: 'delete',
+				name: '卸载程序',
+				activeOn: 'SINGLE',
+				onClick: function(e) {
+					var id = this.state.selectedItems[0].id;
+					bsConfirm(function(b) {
+						if (b) {
+							window.freact.formUtil.createFormSubmit({
+								action: "/app/software-install",
+								method: "DELETE"},
+								{server: server,
+								software: id});
+							}
+						});
+				}
+			}]);
+	</script>
+</body>
+
+</html>

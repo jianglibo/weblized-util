@@ -1,0 +1,91 @@
+command list:
+1. from --srcFolder --rootPackage --excludes
+2. to --dstFolder --rootPackage
+
+
+how to debug:
+
+java -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y -jar .\build\libs\mysql-backup-boot.jar --spring.profiles.active=dev
+
+netstat -ano | Where-Object {$_ -match '8000'}
+netstat -ano | Where-Object {$_ -match '8000'} | ForEach-Object {$_ -split '\s+'} | Select-Object -Last 1 | Stop-Process -Id {$_}
+
+gradle -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n bootRun
+ 
+grade bootJar -t
+
+ 
+ JLineShellAutoConfiguration hooks all together.
+ 
+ ## runner
+ 
+ ApplicationRunner vs CommandLineRunner. They two different on arguments.
+ 
+ 
+ SpringApplication.callRunners will call ApplicationRunners and CommandLineRunners in context.
+ 
+ ResultHandlers is passed in to Shell.
+ 
+ExtendedDefaultParserMine line 114.
+if (eofOnEscapedNewLine && isEscapeChar(line, line.length() - 1)) {
+	throw new EOFError(-1, -1, "Escaped new line", "newline");
+}
+
+Shell. set parameterResolvers.
+
+eclipse static import test package.
+Window > Preferences > Java > Editor > Content Assist > Favorites
+org.hamcrest.Matchers
+org.hamcrest.CoreMatchers
+org.junit
+org.junit.Assert
+org.junit.Assume
+org.junit.matchers.JUnitMatchers
+net.sf.expectit.matcher.Matchers
+
+
+file-appender.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+File appender logback configuration provided for import, equivalent to the programmatic
+initialization performed by Boot
+-->
+
+<included>
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+		<file>${LOG_FILE}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+			<maxFileSize>${LOG_FILE_MAX_SIZE:-10MB}</maxFileSize>
+			<maxHistory>${LOG_FILE_MAX_HISTORY:-0}</maxHistory>
+		</rollingPolicy>
+	</appender>
+</included>
+
+
+console-appender.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Console appender logback configuration provided for import, equivalent to the programmatic
+initialization performed by Boot
+-->
+
+<included>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+</included>
+
+environment override:
+java -jar .\build\libs\mysql-backup-boot.jar --spring.quartz.job-store-type=memory
+
+netstat -aon | find /i "8000"
+taskkill /PID 24548 /F
