@@ -65,7 +65,8 @@ public class AppWebSecurity {
 					.antMatchers("/curdir")
 					.permitAll()
 					.anyRequest()
-					.authenticated();
+					.permitAll();
+//					.authenticated();
 		}
 	}
 }

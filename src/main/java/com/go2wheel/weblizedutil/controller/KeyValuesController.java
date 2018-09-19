@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.go2wheel.weblizedutil.model.KeyValue;
 import com.go2wheel.weblizedutil.service.KeyValueDbService;
+import com.go2wheel.weblizedutil.ui.MainMenuItem;
 
 
 @Controller
@@ -47,6 +48,11 @@ public class KeyValuesController  extends CRUDController<KeyValue, KeyValueDbSer
 
 	@Override
 	protected void listExtraAttributes(Model model) {
+	}
+	
+	@Override
+	public List<MainMenuItem> getMenuItems() {
+		return null;
 	}
 	
 	protected int getMenuOrder() {

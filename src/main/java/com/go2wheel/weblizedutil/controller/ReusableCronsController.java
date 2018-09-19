@@ -1,5 +1,9 @@
 package com.go2wheel.weblizedutil.controller;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.go2wheel.weblizedutil.model.ReusableCron;
 import com.go2wheel.weblizedutil.service.ReusableCronDbService;
+import com.go2wheel.weblizedutil.ui.MainMenuItem;
 
 
 @Controller
@@ -38,6 +43,11 @@ public class ReusableCronsController extends CRUDController<ReusableCron, Reusab
 
 	@Override
 	protected void listExtraAttributes(Model model) {
+	}
+	
+	@Override
+	public List<MainMenuItem> getMenuItems() {
+		return null;
 	}
 	
 	@Override

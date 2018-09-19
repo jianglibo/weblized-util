@@ -53,7 +53,7 @@
 		</a>
 		<div id="menu">
 			<div class="pure-menu">
-				<a class="pure-menu-heading" href="/">Pure</a>
+				<a class="pure-menu-heading" href="/">首页</a>
 				<ul th:remove="all-but-first" class="pure-menu-list">
 					<li class="pure-menu-item" th:each="mi: ${menus}" th:classappend="(${mi.groupFirst} ? 'menu-item-divided' : '') + ' ' + (${mi.active} ? 'pure-menu-selected' : '')">
 						<a href="/start/" th:href="@{${mi.path}}" class="pure-menu-link" th:text="#{${mi.name}}">Get Started</a>
@@ -292,7 +292,7 @@
 							</li>
 						</ul>
 						-->
-						<p class="legal-copyright">&copy; 2018 - 宁波汇民科技 All rights reserved.</p>
+						<p class="legal-copyright">&copy; 2018 - jianglibo@hotmail.com All rights reserved.</p>
 					</div>
 				</div>
 			</div>

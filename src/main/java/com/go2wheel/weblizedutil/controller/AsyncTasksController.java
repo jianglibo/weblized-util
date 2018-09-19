@@ -50,7 +50,8 @@ public class AsyncTasksController extends ControllerBase {
 
 	@Override
 	public List<MainMenuItem> getMenuItems() {
-		return Arrays.asList(new MainMenuItem("appmodel", "async-tasks", getMappingUrl(), 1000));
+//		return Arrays.asList(new MainMenuItem("appmodel", "async-tasks", getMappingUrl(), 1000));
+		return null;
 	}
 
 }
