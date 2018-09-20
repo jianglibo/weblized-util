@@ -1,6 +1,5 @@
 package com.go2wheel.weblizedutil.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.go2wheel.weblizedutil.model.BaseModel;
 import com.go2wheel.weblizedutil.service.DbServiceBase;
 import com.go2wheel.weblizedutil.ui.MainMenuItem;
+import com.go2wheel.weblizedutil.ui.MainMenuItemImpl;
 import com.go2wheel.weblizedutil.util.ExceptionUtil;
 import com.go2wheel.weblizedutil.value.CommonMessageKeys;
 import com.google.common.base.CaseFormat;
@@ -163,8 +163,8 @@ public abstract class CRUDController<T extends BaseModel, D extends DbServiceBas
 
 	
 	@Override
-	public List<MainMenuItem> getMenuItems() {
-		return Arrays.asList(new MainMenuItem("appmodel", getLowerHyphenPlural(), getMappingUrl(), getMenuOrder()));
+	public MainMenuItem getMenuItem() {
+		return new MainMenuItemImpl("appmodel", getLowerHyphenPlural(), getMappingUrl(), getMenuOrder());
 	}
 	
 	protected int getMenuOrder() {

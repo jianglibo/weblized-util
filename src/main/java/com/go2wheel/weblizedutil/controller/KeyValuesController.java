@@ -51,7 +51,7 @@ public class KeyValuesController  extends CRUDController<KeyValue, KeyValueDbSer
 	}
 	
 	@Override
-	public List<MainMenuItem> getMenuItems() {
+	public MainMenuItem getMenuItem() {
 		return null;
 	}
 	

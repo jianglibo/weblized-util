@@ -1,7 +1,5 @@
 package com.go2wheel.weblizedutil.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
@@ -69,7 +67,7 @@ public class UserAccountsController  extends CRUDController<UserAccount, UserAcc
 	}
 	
 	@Override
-	public List<MainMenuItem> getMenuItems() {
+	public MainMenuItem getMenuItem() {
 		return null;
 	}
 }

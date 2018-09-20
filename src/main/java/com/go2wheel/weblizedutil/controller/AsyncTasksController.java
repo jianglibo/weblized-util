@@ -1,8 +1,6 @@
 package com.go2wheel.weblizedutil.controller;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.go2wheel.weblizedutil.service.GlobalStore;
 import com.go2wheel.weblizedutil.ui.MainMenuItem;
+import com.go2wheel.weblizedutil.ui.MainMenuItemImpl;
 
 @Controller
 @RequestMapping(AsyncTasksController.MAPPING_PATH)
@@ -48,7 +47,6 @@ public class AsyncTasksController extends ControllerBase {
 	}
 
 
-	@Override
 	public List<MainMenuItem> getMenuItems() {
 //		return Arrays.asList(new MainMenuItem("appmodel", "async-tasks", getMappingUrl(), 1000));
 		return null;

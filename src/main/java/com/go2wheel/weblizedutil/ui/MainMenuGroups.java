@@ -65,12 +65,8 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 
 	public MainMenuGroups prepare(String currentUri) {
 		Assert.isTrue(cloned, "only cloned groups could be used.");
-		Optional<MainMenuItem> mi = getGroups().stream().flatMap(g -> g.getItems().stream())
-				.filter(it -> currentUri.equals(it.getPath())).findFirst();
-		if (mi.isPresent()) {
-			mi.get().setActive(true);
-		}
-
+		getGroups().stream().flatMap(g -> g.getItems().stream()).forEach(mi -> mi.alterState(currentUri));
+		
 		for (int i = 1; i < getGroups().size(); i++) {
 			MainMenuGroup mg = getGroups().get(i);
 			if (mg.getItems().size() > 0) {
@@ -104,7 +100,7 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 			List<KeyValueProperties> mikvl = kvp.getListOfKVP("items");
 			
 			List<MainMenuItem> mis = mikvl.stream().map(mikvp -> {
-				MainMenuItem mi = new MainMenuItem();
+				MainMenuItemImpl mi = new MainMenuItemImpl();
 				mi.setName(mikvp.getProperty("name"));
 				mi.setOrder(mikvp.getInteger("order"));
 				mi.setPath(mikvp.getProperty("path"));
@@ -126,7 +122,7 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 		});
 
 		Map<String, ? extends ControllerBase> cbs = applicationContext.getBeansOfType(ControllerBase.class);
-		cbs.values().stream().map(cb -> cb.getMenuItems()).filter(Objects::nonNull).flatMap(mis -> mis.stream())
+		cbs.values().stream().map(cb -> cb.getMenuItem()).filter(Objects::nonNull)
 				.map(mi -> {
 					if (!mi.getName().startsWith("menu.")) {
 						mi.setName("menu." + mi.getName());

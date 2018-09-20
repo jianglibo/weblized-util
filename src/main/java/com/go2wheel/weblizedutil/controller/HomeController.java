@@ -1,7 +1,5 @@
 package com.go2wheel.weblizedutil.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.BeansException;
@@ -13,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import com.go2wheel.weblizedutil.ui.MainMenuItem;
+import com.go2wheel.weblizedutil.ui.MainMenuItemImpl;
 import com.go2wheel.weblizedutil.util.TplUtil;
 
 
@@ -45,7 +43,7 @@ public class HomeController extends ControllerBase {
 	}
 
 	@Override
-	public List<MainMenuItem> getMenuItems() {
+	public MainMenuItemImpl getMenuItem() {
 		return null;
 	}
 

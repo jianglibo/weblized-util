@@ -18,9 +18,10 @@ import com.go2wheel.weblizedutil.SettingsInDb;
 import com.go2wheel.weblizedutil.service.GlobalStore;
 import com.go2wheel.weblizedutil.ui.MainMenuGroups;
 import com.go2wheel.weblizedutil.ui.MainMenuItem;
+import com.go2wheel.weblizedutil.ui.MainMenuItemImpl;
 import com.go2wheel.weblizedutil.util.TplUtil;
 
-public abstract class ControllerBase   implements ApplicationContextAware {
+public abstract class ControllerBase implements ApplicationContextAware {
 	
 	protected ApplicationContext applicationContext;
 	
@@ -62,7 +63,7 @@ public abstract class ControllerBase   implements ApplicationContextAware {
 		this.applicationContext = applicationContext;
 	}
 	
-	public abstract List<MainMenuItem> getMenuItems();
+	public abstract MainMenuItem getMenuItem();
 	
 	public String getMappingUrl() {
 		return mappingUrl;

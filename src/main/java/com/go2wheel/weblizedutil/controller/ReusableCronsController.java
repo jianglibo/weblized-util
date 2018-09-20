@@ -1,9 +1,5 @@
 package com.go2wheel.weblizedutil.controller;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,7 +42,7 @@ public class ReusableCronsController extends CRUDController<ReusableCron, Reusab
 	}
 	
 	@Override
-	public List<MainMenuItem> getMenuItems() {
+	public MainMenuItem getMenuItem() {
 		return null;
 	}
 	
