@@ -47,7 +47,7 @@ public class AsyncTasksController extends ControllerBase {
 	}
 
 
-	public List<MainMenuItem> getMenuItems() {
+	public MainMenuItem getMenuItem() {
 //		return Arrays.asList(new MainMenuItem("appmodel", "async-tasks", getMappingUrl(), 1000));
 		return null;
 	}
