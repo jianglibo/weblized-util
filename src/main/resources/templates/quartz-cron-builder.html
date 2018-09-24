@@ -1,5 +1,5 @@
 <!doctype html>
-<html th:replace="~{layout :: layout(~{::title}, ~{},  ~{::div.header}, ~{::div.content}, ~{})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{layout :: layout(~{::title}, ~{},  ~{::div.header}, ~{::div.content}, ~{::script})}" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title>Index Page</title>
@@ -19,41 +19,22 @@
 					<fieldset>
 						<div class="pure-g">
 							<div class="pure-u-1">
-								<select id="loop-unit" class="pure-input-1">
-									<option>固定周期执行一次</option>
+								<select id="loop-unit" class="pure-input-1" th:remove="all-but-first">
+									<option  th:each="pattern: ${patterns}" th:value="${pattern.name}" th:text="${pattern.iname}">固定周期执行一次</option>
 									<option>指定日期执行一次</option>
 								</select>
 							</div>
 						</div>
 					</fieldset>
 				</form>
-				<form class="pure-form pure-form-stacked">
-					<fieldset>
-						<div class="pure-g">
-							<div class="pure-u-1-2">
-								<label for="loop-value">数值（每隔多少单位）</label>
-								<input id="loop-value" class="pure-u-23-24" type="text" placeholder="">
-							</div>
-							<div class="pure-u-1-2">
-								<label for="loop-unit">单位</label>
-								<select id="loop-unit" class="pure-input-1-2">
-									<option>秒钟</option>
-									<option>分钟</option>
-									<option>小时</option>
-									<option>天</option>
-								</select>
-							</div>
-						</div>
-					</fieldset>
-				</form>
-				<p>表达式描述</p>
+				<p>每秒钟执行1次</p>
 				<form class="pure-form pure-form-stacked">
 					<fieldset>
 						<!--						<legend>点击对应字段修改表达式：</legend> -->
 
-						<div class="pure-g">
-							<div class="pure-u-1-8">
-								<input id="first-name" class="pure-u-23-24" type="text" placeholder="秒">
+						<div class="pure-g" th:remove="all-but-first">
+							<div class="pure-u-1-8" th:each="cronField: ${cronFields}">
+								<input th:id="${cronField.name} + '-field'" id="first-name" class="pure-u-23-24" type="text" placeholder="秒" th:placeholder="${cronField.iname}">
 							</div>
 
 							<div class="pure-u-1-8">
@@ -84,18 +65,17 @@
 				</form>
 				<div>
 					<table class="pure-table pure-table-bordered">
-						<thead>
-							<tr>
-								<th>字段名</th>
-								<th>允许值</th>
-								<th>允许特殊字符</th>
-							</tr>
-						</thead>
-
 						<tbody>
 							<tr>
-								<td>秒</td>
+								<td>字段名</td>
+								<td>秒钟</td>
+							</tr>
+							<tr>
+								<td>允许值</td>
 								<td>0-59</td>
+							</tr>
+							<tr>
+								<td>特殊字符</td>
 								<td>, - * /</td>
 							</tr>
 						</tbody>
@@ -105,15 +85,9 @@
 			</div>
 		</div>
 	</div>
+	<script th:inline="javascript">
+		var cronFields = /*[[${cronFields}]]*/ null;
+		var preDefinedPatterns =  /*[[${patterns}]]*/ null;
+	</script>
 </body>
-<!--
-Seconds	YES	0-59	, - * /
-Minutes	YES	0-59	, - * /
-Hours	YES	0-23	, - * /
-Day of month	YES	1-31	, - * ? / L W
-Month	YES	1-12 or JAN-DEC	, - * /
-Day of week	YES	1-7 or SUN-SAT	, - * ? / L #
-Year	NO	empty, 1970-2099	, - * /
--->
-
 </html>

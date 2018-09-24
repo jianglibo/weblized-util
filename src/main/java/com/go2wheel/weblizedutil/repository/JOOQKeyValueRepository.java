@@ -27,7 +27,7 @@ public class JOOQKeyValueRepository extends RepositoryBaseImpl<KeyValueRecord, K
 
 	@Override
 	public List<KeyValue> findManyByKeyPrefix(String key) {
-		return jooq.selectFrom(KEY_VALUE).where(KEY_VALUE.ITEM_KEY.startsWith(key)).fetchInto(KeyValue.class);
+		return jooq.selectFrom(KEY_VALUE).where(KEY_VALUE.ITEM_KEY.startsWith(key)).orderBy(KEY_VALUE.ITEM_KEY.asc()).fetchInto(KeyValue.class);
 	}
 
 }

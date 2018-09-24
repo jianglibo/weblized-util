@@ -4,12 +4,15 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.go2wheel.weblizedutil.service.QuartzCronBuilderService;
 import com.go2wheel.weblizedutil.ui.MainMenuItem;
 
 @Controller
@@ -17,6 +20,9 @@ import com.go2wheel.weblizedutil.ui.MainMenuItem;
 public class QuartzCronExpressController extends ControllerBase {
 
 	public static final String MAPPING_PATH = "/weblized/quartz-cron-builder";
+	
+	@Autowired
+	private QuartzCronBuilderService quartzCronBuilderService;
 
 	public QuartzCronExpressController() {
 		super(MAPPING_PATH);
@@ -25,9 +31,8 @@ public class QuartzCronExpressController extends ControllerBase {
 	@GetMapping("")
 	public String status(Model model, HttpServletRequest request)
 			throws IOException {
-		String sid = request.getSession(true).getId();
-		model.addAttribute(CRUDController.LIST_OB_NAME, globalStore.getFutureGroupAll(sid));
-		model.addAttribute("storeState", globalStore.getStoreState());
+		model.addAttribute("cronFields", quartzCronBuilderService.getFieldDefinitions(LocaleContextHolder.getLocale()));
+		model.addAttribute("patterns", quartzCronBuilderService.getPredefinedCronPattern(LocaleContextHolder.getLocale()));
 		return "quartz-cron-builder";
 	}
 	

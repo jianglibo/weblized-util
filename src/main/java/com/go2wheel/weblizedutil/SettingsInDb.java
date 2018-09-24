@@ -99,14 +99,25 @@ public class SettingsInDb {
 		}
 	}
 
-	protected LoadingCache<String, String> getLc() {
+	protected LoadingCache<String, String> getSingleValueLc() {
 		return singleValueLc;
+	}
+	
+	protected LoadingCache<String, List<String>> getListValueLc() {
+		return listValueLc;
 	}
 
 	@EventListener
 	public void whenKeyValueChanged(ModelChangedEvent<KeyValue> keyValueChangedEvent) {
-		KeyValue kv = keyValueChangedEvent.getAfter();
-		singleValueLc.invalidate(kv.getItemKey());
+		String k = keyValueChangedEvent.getAfter().getItemKey();
+		singleValueLc.invalidate(k);
+		
+		listValueLc.asMap().keySet().forEach(ik ->  {
+			if (k.startsWith(ik)) {
+				listValueLc.invalidate(ik);
+			}
+		});
+		
 	}
 
 	public String getString(String key, String defaultValue) {
@@ -130,12 +141,31 @@ public class SettingsInDb {
 
 	}
 	
+	/**
+	 * 
+	 * @param prefix
+	 * @return
+	 */
 	public List<String> getListString(String prefix) {
 		try {
 			return listValueLc.get(prefix);
 		} catch (ExecutionException e) {
 			ExceptionUtil.logErrorException(logger, e);
 			return Lists.newArrayList();
+		}
+	}
+	
+	/**
+	 * 
+	 * @param prefix
+	 * @return
+	 */
+	public List<String> getListString(String prefix, String anotherPrefixIfEmptyResult) {
+		List<String> ls = getListString(prefix);
+		if (ls.isEmpty()) {
+			return getListString(anotherPrefixIfEmptyResult);
+		} else {
+			return ls;
 		}
 	}
 	
@@ -158,5 +188,14 @@ public class SettingsInDb {
 
 	public Path getDataDir() {
 		return dataDir;
+	}
+
+	public String getStringByKeyaThenKeyb(String keya, String keyb) {
+		String v = getString(keya);
+		if (v.isEmpty()) {
+			return getString(keyb);
+		} else {
+			return v;
+		}
 	}
 }
