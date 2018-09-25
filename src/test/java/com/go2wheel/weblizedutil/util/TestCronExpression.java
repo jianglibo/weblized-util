@@ -171,6 +171,24 @@ public class TestCronExpression {
 	}
 	
 	@Test
+	public void testFiveSec33() throws ParseException {
+		CronExpression ce = new CronExpression("3/5 * * ? * * *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		
+		Date d = now;
+		
+		for(int idx = 0; idx < 100; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			int mod = d.getSeconds() % 5;
+			System.out.println(d.getSeconds());
+			assertThat(mod, equalTo(3));
+		}
+	}
+	
+	
+	@Test
 	public void testFiveSec3() throws ParseException {
 		CronExpression ce = new CronExpression("13/5 * * ? * * *");
 		
@@ -211,6 +229,22 @@ public class TestCronExpression {
 		int t2 = d1.getDate();
 		
 		assertThat(t2, equalTo(t1 + 1));
+	}
+	
+	
+	@Test
+	public void tDate() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 1/3 * ? *");
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+		for(int idx = 0; idx < 100; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			int i = d.getDate() % 3;
+			System.out.println(d.getDate());
+			assertThat(i, equalTo(1)); // 31 1	4 7, 
+		}
+
 	}
 	
 }
