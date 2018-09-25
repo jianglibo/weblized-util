@@ -22,9 +22,14 @@ public class QuartzCronBuilderService {
 	
 	public static final String CRON_PATTERN_NAME_PREFIX = "app.quartzcron.pattern.name";
 	public static final String CRON_PATTERN_INAME_PREFIX = "app.quartzcron.pattern.iname.";
+	public static final String CRON_PATTERN_UNAME_PREFIX = "app.quartzcron.pattern.uname.";
 	public static final String CRON_PATTERN_V_PREFIX = "app.quartzcron.pattern.v.";
 	
-	public static final String CRON_FIELD_MESSAGE_PREFIX = "quartz.cron.fieldname.";
+	public static final String CRON_FIELD_IMESSAGE_PREFIX = "quartz.cron.fieldname.iname.";
+	public static final String CRON_FIELD_UMESSAGE_PREFIX = "quartz.cron.fieldname.uname.";
+	
+	public static final String CRON_TEMPLATE_A_PREFIX = "quartz.cron.template.all";
+	public static final String CRON_TEMPLATE_S_PREFIX = "quartz.cron.template.specified";
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -55,8 +60,8 @@ public class QuartzCronBuilderService {
 		settingsInDb.getString(CRON_PATTERN_V_PREFIX + curName, "3 33 22 */1 * ? *");
 	}
 	
-	private String getMessage(QuartzCronField f, String mn, Locale locale) {
-		return messageSource.getMessage(mn, new Object[] {}, f.getName(), locale);
+	private String getMessage(String defaultValue, String mn, Locale locale) {
+		return messageSource.getMessage(mn, new Object[] {}, defaultValue, locale);
 	}
 	
 	// app.quartzcron.pattern.name[0] = period_seconds
@@ -84,6 +89,11 @@ public class QuartzCronBuilderService {
 	public List<QuartzCronField> getFieldDefinitions(Locale locale) {
 		List<QuartzCronField> fieldDefinitions = Lists.newArrayList();
 		
+		
+		String alltemplate = getMessage("", CRON_TEMPLATE_A_PREFIX, locale);
+		String specifiedTemplate = getMessage("", CRON_TEMPLATE_S_PREFIX, locale);
+		
+		
 		QuartzCronField f = new QuartzCronField("seconds", true, "0-59", ", - * /");
 		fieldDefinitions.add(f);
 		
@@ -92,8 +102,13 @@ public class QuartzCronBuilderService {
 		List<String> examples = settingsInDb.getListString(k + "_" + locale.getLanguage(), k);
 		f.setExamples(examples);
 		
-		String mn = CRON_FIELD_MESSAGE_PREFIX + f.getName();
-		f.setIname(getMessage(f, mn, locale));
+		String mn = CRON_FIELD_IMESSAGE_PREFIX + f.getName();
+		f.setIname(getMessage(f.getName(), mn, locale));
+		String mn1 = CRON_FIELD_UMESSAGE_PREFIX + f.getName();
+		f.setUname(getMessage(f.getName(), mn1, locale));
+		f.setAllTemplate(alltemplate);
+		f.setSpecifiedTemplate(specifiedTemplate);
+		
 
 		f = new QuartzCronField("minutes", true, "0-59", ", - * /");
 		fieldDefinitions.add(f);
@@ -102,8 +117,12 @@ public class QuartzCronBuilderService {
 		examples = settingsInDb.getListString(k + "_" + locale.getLanguage(), k);
 		f.setExamples(examples);
 
-		mn = CRON_FIELD_MESSAGE_PREFIX + f.getName();
-		f.setIname(getMessage(f, mn, locale));
+		mn = CRON_FIELD_IMESSAGE_PREFIX + f.getName();
+		f.setIname(getMessage(f.getName(), mn, locale));
+		mn1 = CRON_FIELD_UMESSAGE_PREFIX + f.getName();
+		f.setUname(getMessage(f.getName(), mn1, locale));
+		f.setAllTemplate(alltemplate);
+		f.setSpecifiedTemplate(specifiedTemplate);
 
 		f = new QuartzCronField("hours", true, "0-23", ", - * /");
 		fieldDefinitions.add(f);
@@ -112,8 +131,12 @@ public class QuartzCronBuilderService {
 		examples = settingsInDb.getListString(k + "_" + locale.getLanguage(), k);
 		f.setExamples(examples);
 
-		mn = CRON_FIELD_MESSAGE_PREFIX + f.getName();
-		f.setIname(getMessage(f, mn, locale));
+		mn = CRON_FIELD_IMESSAGE_PREFIX + f.getName();
+		f.setIname(getMessage(f.getName(), mn, locale));
+		mn1 = CRON_FIELD_UMESSAGE_PREFIX + f.getName();
+		f.setUname(getMessage(f.getName(), mn1, locale));
+		f.setAllTemplate(alltemplate);
+		f.setSpecifiedTemplate(specifiedTemplate);
 		
 		f = new QuartzCronField("dayOfMonth", true, "1-31", ", - * / ? L W");
 		fieldDefinitions.add(f);
@@ -122,8 +145,12 @@ public class QuartzCronBuilderService {
 		examples = settingsInDb.getListString(k + "_" + locale.getLanguage(), k);
 		f.setExamples(examples);
 
-		mn = CRON_FIELD_MESSAGE_PREFIX + f.getName();
-		f.setIname(getMessage(f, mn, locale));
+		mn = CRON_FIELD_IMESSAGE_PREFIX + f.getName();
+		f.setIname(getMessage(f.getName(), mn, locale));
+		mn1 = CRON_FIELD_UMESSAGE_PREFIX + f.getName();
+		f.setUname(getMessage(f.getName(), mn1, locale));
+		f.setAllTemplate(alltemplate);
+		f.setSpecifiedTemplate(specifiedTemplate);
 		
 		f = new QuartzCronField("month", true, "1-12 or JAN-DEC", ", - * /");
 		fieldDefinitions.add(f);
@@ -131,8 +158,12 @@ public class QuartzCronBuilderService {
 		examples = settingsInDb.getListString(k + "_" + locale.getLanguage(), k);
 		f.setExamples(examples);
 
-		mn = CRON_FIELD_MESSAGE_PREFIX + f.getName();
-		f.setIname(getMessage(f, mn, locale));
+		mn = CRON_FIELD_IMESSAGE_PREFIX + f.getName();
+		f.setIname(getMessage(f.getName(), mn, locale));
+		mn1 = CRON_FIELD_UMESSAGE_PREFIX + f.getName();
+		f.setUname(getMessage(f.getName(), mn1, locale));
+		f.setAllTemplate(alltemplate);
+		f.setSpecifiedTemplate(specifiedTemplate);
 		
 		f = new QuartzCronField("dayOfWeek", true, "1-7 or SUN-SAT", ", - * / ? L #");
 		fieldDefinitions.add(f);
@@ -140,8 +171,12 @@ public class QuartzCronBuilderService {
 		examples = settingsInDb.getListString(k + "_" + locale.getLanguage(), k);
 		f.setExamples(examples);
 
-		mn = CRON_FIELD_MESSAGE_PREFIX + f.getName();
-		f.setIname(getMessage(f, mn, locale));
+		mn = CRON_FIELD_IMESSAGE_PREFIX + f.getName();
+		f.setIname(getMessage(f.getName(), mn, locale));
+		mn1 = CRON_FIELD_UMESSAGE_PREFIX + f.getName();
+		f.setUname(getMessage(f.getName(), mn1, locale));
+		f.setAllTemplate(alltemplate);
+		f.setSpecifiedTemplate(specifiedTemplate);
 		
 		f = new QuartzCronField("year", false, "1970-2099", ", - * /");
 		fieldDefinitions.add(f);
@@ -150,8 +185,13 @@ public class QuartzCronBuilderService {
 		examples = settingsInDb.getListString(k + "_" + locale.getLanguage(), k);
 		f.setExamples(examples);
 		
-		mn = CRON_FIELD_MESSAGE_PREFIX + f.getName();
-		f.setIname(getMessage(f, mn, locale));
+		mn = CRON_FIELD_IMESSAGE_PREFIX + f.getName();
+		f.setIname(getMessage(f.getName(), mn, locale));
+		mn1 = CRON_FIELD_UMESSAGE_PREFIX + f.getName();
+		f.setUname(getMessage(f.getName(), mn1, locale));
+		f.setAllTemplate(alltemplate);
+		f.setSpecifiedTemplate(specifiedTemplate);
+		
 		return fieldDefinitions;
 	}
 

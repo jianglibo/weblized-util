@@ -35,6 +35,33 @@ public class TestCronExpression {
 		}
 	}
 	
+
+	
+	@Test
+	public void tNoEnd() throws ParseException {
+		try {
+			new CronExpression("* * * 1/ * ? *");
+		} catch (Exception e) {
+			assertTrue(e.getMessage().contains("'/' must be followed by an integer"));
+		}
+	}
+	
+	@Test
+	public void tNoBegin() throws ParseException {
+		new CronExpression("* * * /2 * ? *");
+	}
+	
+	
+	@Test(expected = ParseException.class)
+	public void tNoEndDash() throws ParseException {
+		new CronExpression("* * * 1- * ? *");
+	}
+	
+	@Test(expected=ParseException.class)
+	public void tNoBeginDash() throws ParseException {
+		new CronExpression("* * * -2 * ? *");
+	}
+	
 	@Test
 	public void tTwoQuestAsterisk1() throws ParseException {
 		try {
@@ -179,7 +206,7 @@ public class TestCronExpression {
 		
 		Date d = now;
 		
-		for(int idx = 0; idx < 100; idx++) {
+		for(int idx = 0; idx < 20; idx++) {
 			d = ce.getNextValidTimeAfter(d);
 			int mod = d.getSeconds() % 5;
 			System.out.println(d.getSeconds());
@@ -238,13 +265,128 @@ public class TestCronExpression {
 		Instant is = Instant.now();
 		Date now = Date.from(is);
 		Date d = now;
-		for(int idx = 0; idx < 100; idx++) {
+		for(int idx = 0; idx < 20; idx++) {
 			d = ce.getNextValidTimeAfter(d);
 			int i = d.getDate() % 3;
 			System.out.println(d.getDate());
 			assertThat(i, equalTo(1)); // 31 1	4 7, 
 		}
-
 	}
+	
+	@Test
+	public void tDate1() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 27/3 * ? *");
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 20; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			int i = d.getDate() % 3;
+			System.out.println(d.getDate());
+			assertThat(i, equalTo(0)); // 27, 30, 27, 30, 不会绕过来。 
+		}
+	}
+	
+	@Test
+	public void tRange3() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 25-25 * ? *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 20; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			System.out.println(d.getDate()); // only 25
+ 		}
+	}
+	
+	@Test
+	public void tRangeMinutes() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 20-3 * * ? *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 20; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			System.out.println(d.getHours()); // 20,21,22,23,0,1,2,3
+ 		}
+	}
+	
+	@Test
+	public void tRange4() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 25-24 * ? *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 20; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			System.out.println(d.getDate()); // only 25
+ 		}
+	}
+	
+	
+	@Test
+	public void tRange() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 25-5 * ? *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 20; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			System.out.println(d.getDate()); // round up, 25-31, 1-5
+ 		}
+	}
+	
+	@Test
+	public void tRange1() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 15-10 * ? *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 40; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			System.out.println(d.getDate()); // round up. 15-31 and 1-10
+ 
+		}
+	}
+	
+	@Test
+	public void tStep() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 25/3 * ? *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 40; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			System.out.println(d.getDate()); // won't round up. 25,28,31。
+ 		}
+	}
+	
+	@Test
+	public void tStep2() throws ParseException {
+		CronExpression ce = new CronExpression("1 55/6 1 * * ? *");
+		
+		Instant is = Instant.now();
+		Date now = Date.from(is);
+		Date d = now;
+
+		for(int idx = 0; idx < 20; idx++) {
+			d = ce.getNextValidTimeAfter(d);
+			System.out.println(d.getMinutes()); // won't round up. 25,28,31。
+ 		}
+	}
+
 	
 }

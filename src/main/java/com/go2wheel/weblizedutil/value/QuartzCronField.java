@@ -8,7 +8,13 @@ public class QuartzCronField {
 	
 	private String iname;
 	
+	private String uname;
+	
 	private boolean mandantory;
+	
+	private String allTemplate;
+	
+	private String specifiedTemplate;
 	
 	private String allowedValues;
 	
@@ -70,6 +76,30 @@ public class QuartzCronField {
 
 	public void setIname(String iname) {
 		this.iname = iname;
+	}
+
+	public String getUname() {
+		return uname;
+	}
+
+	public void setUname(String uname) {
+		this.uname = uname;
+	}
+
+	public String getAllTemplate() {
+		return allTemplate;
+	}
+
+	public void setAllTemplate(String allTemplate) {
+		this.allTemplate = allTemplate;
+	}
+
+	public String getSpecifiedTemplate() {
+		return specifiedTemplate;
+	}
+
+	public void setSpecifiedTemplate(String specifiedTemplate) {
+		this.specifiedTemplate = specifiedTemplate;
 	}
 
 }
