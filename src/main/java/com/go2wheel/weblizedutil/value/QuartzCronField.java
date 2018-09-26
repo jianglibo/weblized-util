@@ -10,11 +10,7 @@ public class QuartzCronField {
 	
 	private String uname;
 	
-	private boolean mandantory;
-	
-	private String allTemplate;
-	
-	private String specifiedTemplate;
+	private boolean mandatory;
 	
 	private String allowedValues;
 	
@@ -22,10 +18,10 @@ public class QuartzCronField {
 	
 	private List<String> examples;
 
-	public QuartzCronField(String name, boolean mandantory, String allowedValues, String allowedSpecialCharacters) {
+	public QuartzCronField(String name, boolean mandatory, String allowedValues, String allowedSpecialCharacters) {
 		super();
 		this.name = name;
-		this.mandantory = mandantory;
+		this.mandatory = mandatory;
 		this.allowedValues = allowedValues;
 		this.allowedSpecialCharacters = allowedSpecialCharacters;
 	}
@@ -38,12 +34,12 @@ public class QuartzCronField {
 		this.name = name;
 	}
 
-	public boolean isMandantory() {
-		return mandantory;
+	public boolean isMandatory() {
+		return mandatory;
 	}
 
-	public void setMandantory(boolean mandantory) {
-		this.mandantory = mandantory;
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
 	}
 
 	public String getAllowedValues() {
@@ -84,22 +80,6 @@ public class QuartzCronField {
 
 	public void setUname(String uname) {
 		this.uname = uname;
-	}
-
-	public String getAllTemplate() {
-		return allTemplate;
-	}
-
-	public void setAllTemplate(String allTemplate) {
-		this.allTemplate = allTemplate;
-	}
-
-	public String getSpecifiedTemplate() {
-		return specifiedTemplate;
-	}
-
-	public void setSpecifiedTemplate(String specifiedTemplate) {
-		this.specifiedTemplate = specifiedTemplate;
 	}
 
 }

@@ -31,8 +31,9 @@ public class QuartzCronExpressController extends ControllerBase {
 	@GetMapping("")
 	public String status(Model model, HttpServletRequest request)
 			throws IOException {
-		model.addAttribute("cronFields", quartzCronBuilderService.getFieldDefinitions(LocaleContextHolder.getLocale()));
-		model.addAttribute("patterns", quartzCronBuilderService.getPredefinedCronPattern(LocaleContextHolder.getLocale()));
+//		model.addAttribute("cronFields", quartzCronBuilderService.getFieldDefinitions(LocaleContextHolder.getLocale()));
+//		model.addAttribute("patterns", quartzCronBuilderService.getPredefinedCronPattern(LocaleContextHolder.getLocale()));
+		model.addAttribute("buildCtx", quartzCronBuilderService.getContext(LocaleContextHolder.getLocale()));
 		return "quartz-cron-builder";
 	}
 	

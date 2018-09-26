@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.go2wheel.weblizedutil.SpringBaseFort;
 import com.go2wheel.weblizedutil.service.QuartzCronBuilderService;
+import com.go2wheel.weblizedutil.value.QuartzCronBuilderContext;
 import com.go2wheel.weblizedutil.value.QuartzCronField;
 
 public class TestQuartzCronBuilderService extends SpringBaseFort {
@@ -24,7 +25,8 @@ public class TestQuartzCronBuilderService extends SpringBaseFort {
 	
 	@Test
 	public void tInit() {
-		List<QuartzCronField> fields = quartzCronBuilderService.getFieldDefinitions(Locale.CANADA_FRENCH);
+		QuartzCronBuilderContext qcc = quartzCronBuilderService.getContext(Locale.CANADA_FRENCH);
+		List<QuartzCronField> fields = qcc.getCronFields();
 		
 		assertThat(fields.size(), equalTo(7));
 		
