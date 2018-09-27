@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import com.go2wheel.weblizedutil.SettingsInDb;
+import com.go2wheel.weblizedutil.controller.QuartzCronExpressController;
 import com.go2wheel.weblizedutil.value.PreDefinedCronPattern;
 import com.go2wheel.weblizedutil.value.QuartzCronBuilderContext;
 import com.go2wheel.weblizedutil.value.QuartzCronField;
@@ -72,6 +73,7 @@ public class QuartzCronBuilderService {
 		qcc.setPatterns(getPredefinedCronPattern(locale));
 		qcc.setMaxValueNumber(settingsInDb.getInteger("quartz.cron.max-value-number", 30));
 		qcc.setNextTimeLabel(getMessage("Next Execute Time", "quartz.cron.template.nextimelabel", locale));
+		qcc.setNextTimeUrl(settingsInDb.getString( "quartz.cron.nextimeUrl", QuartzCronExpressController.MAPPING_PATH + "/next"));
 		return qcc;
 	}
 	

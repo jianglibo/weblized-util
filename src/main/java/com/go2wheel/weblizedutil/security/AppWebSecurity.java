@@ -53,6 +53,7 @@ public class AppWebSecurity {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			http
+				.csrf().disable()
 				.formLogin()
 				.and()
 				.logout()

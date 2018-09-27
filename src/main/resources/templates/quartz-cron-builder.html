@@ -14,79 +14,91 @@
 			</div>
 
 			<div class="content">
-				<div>
-				<form class="pure-form pure-form-stacked">
-					<fieldset>
-						<div class="pure-g">
-							<div class="pure-u-1">
-								<select id="loop-unit" class="pure-input-1" th:remove="all-but-first">
-									<option  th:each="pattern: ${patterns}" th:value="${pattern.name}" th:text="${pattern.iname}">固定周期执行一次</option>
-									<option>指定日期执行一次</option>
-								</select>
+				<div id="quartz-cron-builder">
+					<form class="pure-form pure-form-stacked">
+						<fieldset>
+							<div class="pure-g">
+								<div class="pure-u-1">
+									<select id="loop-unit" class="pure-input-1" th:remove="all-but-first">
+										<option th:each="pattern: ${patterns}" th:value="${pattern.name}" th:text="${pattern.iname}">固定周期执行一次</option>
+										<option>指定日期执行一次</option>
+									</select>
+								</div>
 							</div>
-						</div>
-					</fieldset>
-				</form>
-				<p>每秒钟执行1次</p>
-				<form class="pure-form pure-form-stacked">
-					<fieldset>
-						<!--						<legend>点击对应字段修改表达式：</legend> -->
+						</fieldset>
+					</form>
+					<p>每秒钟执行1次</p>
+					<form class="pure-form pure-form-stacked">
+						<fieldset>
+							<!--						<legend>点击对应字段修改表达式：</legend> -->
 
-						<div class="pure-g" th:remove="all-but-first">
-							<div class="pure-u-1-8" th:each="cronField: ${cronFields}">
-								<input th:id="${cronField.name} + '-field'" id="first-name" class="pure-u-23-24" type="text" placeholder="秒" th:placeholder="${cronField.iname}">
-							</div>
+							<div class="pure-g" th:remove="all-but-first">
+								<div class="pure-u-1-8" th:each="cronField: ${cronFields}">
+									<input th:id="${cronField.name} + '-field'" id="first-name" class="pure-u-23-24" type="text" placeholder="秒"
+									 th:placeholder="${cronField.iname}">
+								</div>
 
-							<div class="pure-u-1-8">
-								<input id="last-name" class="pure-u-23-24" type="text" placeholder="分">
-							</div>
+								<div class="pure-u-1-8">
+									<input id="last-name" class="pure-u-23-24" type="text" placeholder="分">
+								</div>
 
-							<div class="pure-u-1-8">
-								<input id="email" class="pure-u-23-24" type="email" placeholder="时">
-							</div>
+								<div class="pure-u-1-8">
+									<input id="email" class="pure-u-23-24" type="email" placeholder="时">
+								</div>
 
-							<div class="pure-u-1-8">
-								<input id="city" class="pure-u-23-24" type="text" placeholder="月天">
-							</div>
+								<div class="pure-u-1-8">
+									<input id="city" class="pure-u-23-24" type="text" placeholder="月天">
+								</div>
 
-							<div class="pure-u-1-8">
-								<input id="city" class="pure-u-23-24" type="text" placeholder="月">
-							</div>
+								<div class="pure-u-1-8">
+									<input id="city" class="pure-u-23-24" type="text" placeholder="月">
+								</div>
 
-							<div class="pure-u-1-8">
-								<input id="city" class="pure-u-23-24" type="text" placeholder="周天">
-							</div>
+								<div class="pure-u-1-8">
+									<input id="city" class="pure-u-23-24" type="text" placeholder="周天">
+								</div>
 
-							<div class="pure-u-1-8">
-								<input id="city" class="pure-u-23-24" type="text" placeholder="年">
+								<div class="pure-u-1-8">
+									<input id="city" class="pure-u-23-24" type="text" placeholder="年">
+								</div>
 							</div>
-						</div>
-					</fieldset>
-				</form>
-				<div>
-					<table class="pure-table pure-table-bordered">
-						<tbody>
-							<tr>
-								<td>字段名</td>
-								<td>秒钟</td>
-							</tr>
-							<tr>
-								<td>允许值</td>
-								<td>0-59</td>
-							</tr>
-							<tr>
-								<td>特殊字符</td>
-								<td>, - * /</td>
-							</tr>
-						</tbody>
-					</table>
+						</fieldset>
+					</form>
+					<div>
+						<table class="pure-table pure-table-bordered">
+							<tbody>
+								<tr>
+									<td>字段名</td>
+									<td>秒钟</td>
+								</tr>
+								<tr>
+									<td>允许值</td>
+									<td>0-59</td>
+								</tr>
+								<tr>
+									<td>特殊字符</td>
+									<td>, - * /</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
-			</div>
 			</div>
 		</div>
 	</div>
 	<script th:inline="javascript">
 		var buildCtx = /*[[${buildCtx}]]*/ null;
+		window.freact.renderQuartzCronBuilder({
+			fieldDescriptions: buildCtx.cronFields,
+			preDefinedPatterns: buildCtx.patterns,
+			maxValueNumber: buildCtx.maxValueNumber,
+			nextTimeLabel: buildCtx.nextTimeLabel,
+			allTemplate: buildCtx.allTemplate,
+			specifiedTemplate: buildCtx.specifiedTemplate,
+			nextTimeUrl: buildCtx.nextTimeUrl,
+			focusedField: 'seconds',
+			focusedPattern: 'period_seconds'
+		});
 	</script>
 </body>
 </html>

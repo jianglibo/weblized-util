@@ -17,6 +17,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import com.go2wheel.weblizedutil.event.ModelChangedEvent;
+import com.go2wheel.weblizedutil.event.ModelDeletedEvent;
 import com.go2wheel.weblizedutil.model.KeyValue;
 import com.go2wheel.weblizedutil.service.KeyValueDbService;
 import com.go2wheel.weblizedutil.util.ExceptionUtil;
@@ -109,7 +110,10 @@ public class SettingsInDb {
 
 	@EventListener
 	public void whenKeyValueChanged(ModelChangedEvent<KeyValue> keyValueChangedEvent) {
-		String k = keyValueChangedEvent.getAfter().getItemKey();
+		invalidateKey(keyValueChangedEvent.getAfter().getItemKey());
+	}
+	
+	private void invalidateKey(String k) {
 		singleValueLc.invalidate(k);
 		
 		listValueLc.asMap().keySet().forEach(ik ->  {
@@ -117,7 +121,11 @@ public class SettingsInDb {
 				listValueLc.invalidate(ik);
 			}
 		});
-		
+	}
+	
+	@EventListener
+	public void whenKeyValueDeleted(ModelDeletedEvent<KeyValue> keyValueChangedEvent) {
+		invalidateKey(keyValueChangedEvent.getModel().getItemKey());
 	}
 
 	public String getString(String key, String defaultValue) {

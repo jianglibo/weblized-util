@@ -7,21 +7,28 @@ import org.springframework.core.convert.converter.ConverterFactory;
 import com.go2wheel.weblizedutil.model.BaseModel;
 import com.go2wheel.weblizedutil.model.JobLog;
 import com.go2wheel.weblizedutil.model.KeyValue;
+import com.go2wheel.weblizedutil.model.ReusableCron;
 import com.go2wheel.weblizedutil.model.UserAccount;
 import com.go2wheel.weblizedutil.service.JobLogDbService;
 import com.go2wheel.weblizedutil.service.KeyValueDbService;
+import com.go2wheel.weblizedutil.service.ReusableCronDbService;
 import com.go2wheel.weblizedutil.service.UserAccountDbService;
 
 public class Id2Model implements ConverterFactory<String, BaseModel> {
 	
+	
 	@Autowired
 	private UserAccountDbService userAccountDbService;
+	
+	@Autowired
+	private ReusableCronDbService reusableCronDbService;
 	
 	@Autowired
 	private KeyValueDbService keyValueDbService;
 	
 	@Autowired
 	private JobLogDbService jobLogDbService;
+	
 
 	public <T extends BaseModel> Converter<String, T> getConverter(Class<T> targetType) {
 		return new StringToModelConverter<T>(targetType);
@@ -43,6 +50,8 @@ public class Id2Model implements ConverterFactory<String, BaseModel> {
 				return (T) jobLogDbService.findById(source);
 			} else if (modelType == KeyValue.class) {
 				return (T) keyValueDbService.findById(source);
+			} else if (modelType == ReusableCron.class) {
+				return (T) reusableCronDbService.findById(source);
 			} else {
 				return (T) null;
 			}

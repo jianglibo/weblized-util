@@ -18,6 +18,8 @@ public class QuartzCronBuilderContext {
 	
 	private String nextTimeLabel;
 	
+	private String nextTimeUrl;
+	
 	public Map<String, Object> asMap() {
 		Map<String, Object> mp = new HashMap<>();
 		mp.put("allTemplate", getAllTemplate());
@@ -73,6 +75,14 @@ public class QuartzCronBuilderContext {
 
 	public void setNextTimeLabel(String nextTimeLabel) {
 		this.nextTimeLabel = nextTimeLabel;
+	}
+
+	public String getNextTimeUrl() {
+		return nextTimeUrl;
+	}
+
+	public void setNextTimeUrl(String nextTimeUrl) {
+		this.nextTimeUrl = nextTimeUrl;
 	}
 
 }

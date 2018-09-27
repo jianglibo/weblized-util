@@ -8,6 +8,8 @@ public class AjaxDataResult<T> implements AjaxResult {
 
 	private List<T> data = Lists.newArrayList();
 	
+	private AjaxResultMeta meta;
+	
 	public AjaxDataResult() {
 		
 	}
@@ -33,6 +35,14 @@ public class AjaxDataResult<T> implements AjaxResult {
 		this.data.add((T) o);
 	}
 	
+	public AjaxResultMeta getMeta() {
+		return meta;
+	}
+
+	public void setMeta(AjaxResultMeta meta) {
+		this.meta = meta;
+	}
+
 	public static class AjaxResultMeta {
 
 		private long total;

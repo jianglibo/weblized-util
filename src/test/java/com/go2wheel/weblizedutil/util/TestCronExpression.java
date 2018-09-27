@@ -1,11 +1,14 @@
 package com.go2wheel.weblizedutil.util;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 import org.junit.Test;
@@ -34,6 +37,35 @@ public class TestCronExpression {
 			assertTrue(e.getMessage().contains("can only be specified for Day-of-Month -OR- Day-of-Week"));
 		}
 	}
+	
+
+	@Test
+	public void tYears() throws ParseException {
+		CronExpression ce = new CronExpression("1 1 1 5 5 ? */5");
+		
+		LocalDateTime ldt = LocalDateTime.now().withYear(1980);
+		
+		Instant it = ldt.toInstant(ZoneOffset.ofHours(0));
+		Date now = Date.from(it);
+		
+		for(int i = 0; i< 10; i++) {
+			now = ce.getNextValidTimeAfter(now);
+			assertThat(now.getYear() + 1900, equalTo(1980 + i * 5 + 5));
+		}
+		
+		ce = new CronExpression("1 1 1 5 5 ? 0/5");
+		now = Date.from(it);
+		
+		for(int i = 0; i< 10; i++) {
+			now = ce.getNextValidTimeAfter(now);
+			assertThat(now.getYear() + 1900, equalTo(1980 + i * 5 + 5));
+		}
+
+
+		
+		
+	}
+
 	
 
 	
