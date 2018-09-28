@@ -2,10 +2,10 @@
 <configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.10.0.xsd">
   <!-- Configure the database connection here -->
   <jdbc>
-    <driver>org.hsqldb.jdbc.JDBCDriver</driver>
-    <url>jdbc:hsqldb:file:c:/db/weblizedutil/devdb;shutdown=true</url>
-    <user>sa</user>
-    <password></password>
+    <driver>com.mysql.cj.jdbc.Driver</driver>
+    <url>jdbc:mysql://localhost:3306/weblizeddev?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=UTC</url>
+    <user>root</user>
+    <password>123456</password>
     
     <!-- You can also pass user/password and other JDBC properties in the optional properties tag: -->
     <!-- 
@@ -87,8 +87,10 @@
       <inputCatalog>PUBLIC</inputCatalog>
       
        -->
-      <inputSchema>PUBLIC</inputSchema>
+      <inputSchema>weblizeddev</inputSchema>
+      <!-- 
       <syntheticIdentities>ID</syntheticIdentities>
+       -->
       
     </database>
 

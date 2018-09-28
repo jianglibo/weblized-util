@@ -19,6 +19,9 @@ public abstract class RepositoryBaseImpl<R extends UpdatableRecord<R>, P extends
 	
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
+	public static final String CREATED_AT_FIELD_NAME = "created_at";
+	public static final String ID_FIELD_NAME = "id";
+	
 	protected DSLContext jooq;
 
 	protected RepositoryBaseImpl(Table<R> table, Class<P> type, DSLContext jooq) {
@@ -33,13 +36,13 @@ public abstract class RepositoryBaseImpl<R extends UpdatableRecord<R>, P extends
 	
 	
 	public List<P> getRecentItems(int number) {
-		Field<?> createdSort =  getTable().field("CREATED_AT");
+		Field<?> createdSort =  getTable().field(CREATED_AT_FIELD_NAME);
 		return jooq.selectFrom(getTable()).orderBy(createdSort.desc()).limit(number).fetchInto(getType());
 	}
 	
 	@Override
 	public List<P> findAll(int offset, int limit) {
-		return jooq.selectFrom(getTable()).orderBy(getTable().field("CREATED_AT").desc()).offset(offset).limit(limit).fetchInto(getType());
+		return jooq.selectFrom(getTable()).orderBy(getTable().field(CREATED_AT_FIELD_NAME).desc()).offset(offset).limit(limit).fetchInto(getType());
 	}
 	
 	@Override
@@ -48,18 +51,18 @@ public abstract class RepositoryBaseImpl<R extends UpdatableRecord<R>, P extends
 	}
 	
 	public 	List<P> findAll(Condition eq, int offset, int limit) {
-		return jooq.selectFrom(getTable()).where(eq).orderBy(getTable().field("CREATED_AT").desc()).offset(offset).limit(limit).fetchInto(getType());
+		return jooq.selectFrom(getTable()).where(eq).orderBy(getTable().field(CREATED_AT_FIELD_NAME).desc()).offset(offset).limit(limit).fetchInto(getType());
 	}
 	
 	@Override
 	public List<P> findByIds(Integer[] array) {
-		Field<?> idf = getTable().field("ID");
+		Field<?> idf = getTable().field(ID_FIELD_NAME);
 		return jooq.selectFrom(getTable()).where(idf.in(Arrays.asList(array))).fetchInto(getType());
 	}
 	
 	@Override
 	public List<P> findAllSortByCreatedAtDesc() {
-		SortField<?> sf = getTable().field("CREATED_AT").desc();
+		SortField<?> sf = getTable().field(CREATED_AT_FIELD_NAME).desc();
 		return findAll(sf, 0, 1000);
 	}
 	

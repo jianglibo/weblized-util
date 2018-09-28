@@ -128,7 +128,7 @@ public abstract class CRUDController<T extends BaseModel, D extends DbServiceBas
 	    	formAttribute(model);
 	        return getFormTpl();
 		}
-	    ras.addFlashAttribute("formProcessSuccessed", "ÒÑ´´½¨");
+	    ras.addFlashAttribute("formProcessSuccessed", "å·²åˆ›å»º");
 	    return afterCreate(entityFromForm, request);
 	}
 
@@ -165,7 +165,7 @@ public abstract class CRUDController<T extends BaseModel, D extends DbServiceBas
 		if (copyProperties(entityFromForm, entityFromDb)) {
 			save(entityFromDb);
 		}
-        ras.addFlashAttribute("formProcessSuccessed", "ÒÑ±£´æ");
+        ras.addFlashAttribute("formProcessSuccessed", "å·²ä¿å­˜");
         return afterEdit(request, ras);
         
 	}

@@ -42,23 +42,23 @@ public class QuartzCronBuilderService {
 	public void post() {
 		String curName = "period_seconds";
 		settingsInDb.getString(CRON_PATTERN_NAME_PREFIX + "[0]", curName);
-		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "Ã¿¸ô¼¸ÃëÖÓÖ´ĞĞ");
+		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "æ¯éš”å‡ ç§’é’Ÿæ‰§è¡Œ");
 		settingsInDb.getString(CRON_PATTERN_V_PREFIX + curName, "0/5 * * * * ? *");
 		
 		curName = "period_minutes";
 		settingsInDb.getString(CRON_PATTERN_NAME_PREFIX + "[1]", curName);
-		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "Ã¿¸ô¼¸·ÖÖÓÖ´ĞĞ");
+		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "æ¯éš”å‡ åˆ†é’Ÿæ‰§è¡Œ");
 		settingsInDb.getString(CRON_PATTERN_V_PREFIX + curName, "1 3/5 * * * ? *");
 		
 		curName = "period_hours";
 		settingsInDb.getString(CRON_PATTERN_NAME_PREFIX + "[2]", curName);
-		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "Ã¿¸ô¼¸Ğ¡Ê±Ö´ĞĞ");
+		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "æ¯éš”å‡ å°æ—¶æ‰§è¡Œ");
 		settingsInDb.getString(CRON_PATTERN_V_PREFIX + curName, "2 3 1/2 * * ? *");
 		
 		curName = "period_day_of_month";
 		settingsInDb.getString(CRON_PATTERN_NAME_PREFIX + "[3]", curName);
-		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "Ã¿¸ô¼¸ÌìÖ´ĞĞ");
-		settingsInDb.getString(CRON_PATTERN_V_PREFIX + curName, "3 33 22 */1 * ? *");
+		settingsInDb.getString(CRON_PATTERN_INAME_PREFIX + curName, "æ¯éš”å‡ å¤©æ‰§è¡Œ");
+		settingsInDb.getString(CRON_PATTERN_V_PREFIX + curName, "3 33 22 1/3 * ? *");
 	}
 	
 	private String getMessage(String defaultValue, String mn, Locale locale) {

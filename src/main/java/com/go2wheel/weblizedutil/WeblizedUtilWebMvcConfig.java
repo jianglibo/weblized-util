@@ -10,9 +10,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -41,6 +43,18 @@ public class WeblizedUtilWebMvcConfig implements WebMvcConfigurer {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/**");
+			}
+			
+			@Override
+			public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+                ThreadPoolTaskExecutor t = new ThreadPoolTaskExecutor();
+                t.setCorePoolSize(10);
+                t.setMaxPoolSize(100);
+                t.setQueueCapacity(50);
+                t.setAllowCoreThreadTimeOut(true);
+                t.setKeepAliveSeconds(120);
+                t.initialize();
+                configurer.setTaskExecutor(t);
 			}
 		};
 	}
