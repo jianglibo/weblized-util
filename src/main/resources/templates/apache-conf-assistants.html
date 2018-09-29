@@ -64,41 +64,14 @@
 							</div>
 						</fieldset>
 					</form>
-					<div>
-						<table class="pure-table pure-table-bordered">
-							<tbody>
-								<tr>
-									<td>字段名</td>
-									<td>秒钟</td>
-								</tr>
-								<tr>
-									<td>允许值</td>
-									<td>0-59</td>
-								</tr>
-								<tr>
-									<td>特殊字符</td>
-									<td>, - * /</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
 				</div>
+					<h2 id="common-layouts" class="content-subhead">关于Apache配置文件的简要说明</h2>
+					<p>Apache的httpd.conf文件本身相当于一个默认的VirtualHost配置，如果你配置了VirtualHost，那么该VirtualHost的配置会覆盖默认配置。那么没有覆盖的配置呢？就会继承！</p>
 			</div>
 		</div>
 	</div>
 	<script th:inline="javascript">
 		var buildCtx = /*[[${buildCtx}]]*/ null;
-		window.freact.renderQuartzCronBuilder({
-			fieldDescriptions: buildCtx.cronFields,
-			preDefinedPatterns: buildCtx.patterns,
-			maxValueNumber: buildCtx.maxValueNumber,
-			nextTimeLabel: buildCtx.nextTimeLabel,
-			allTemplate: buildCtx.allTemplate,
-			specifiedTemplate: buildCtx.specifiedTemplate,
-			nextTimeUrl: buildCtx.nextTimeUrl,
-			focusedField: 'seconds',
-			focusedPattern: 'period_seconds'
-		});
 	</script>
 </body>
 </html>
