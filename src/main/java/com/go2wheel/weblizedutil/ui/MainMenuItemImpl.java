@@ -34,7 +34,7 @@ public class MainMenuItemImpl implements MainMenuItem {
 	public MainMenuItemImpl() {
 	}
 
-	public MainMenuItemImpl customizeFromOrigin(Collection<? extends GrantedAuthority> gas) {
+	public MainMenuItem customizeFromOrigin(Collection<? extends GrantedAuthority> gas) {
 		MainMenuItemImpl mi = new MainMenuItemImpl();
 		mi.setName(getName());
 		mi.setPath(getPath());

@@ -97,7 +97,8 @@ public class ComboController implements ApplicationContextAware {
 	
 	private Resource fnToRe(String fn) {
 		String uri = "classpath:public" + fn;
-		return applicationContext.getResource(uri);
+		Resource r = applicationContext.getResource(uri);
+		return r;
 	}
 	
 	@Override
