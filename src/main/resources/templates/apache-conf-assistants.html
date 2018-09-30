@@ -14,6 +14,34 @@
 			</div>
 
 			<div class="content">
+				<h2 id="simplest" class="content-subhead">静态文件的伺候，即怎样把磁盘上的文件通过apache分发出去？<a href="#simplest" class="content-link" title="Heading anchor"></a></h2>
+				<ul>
+					<li>
+						配置文件里面有DocumentRoot标签，指向一个磁盘目录，此目录会映射到URL空间的"/"。比如：DocumentRoot是/var/www/html，那么:
+						<pre class="code" data-language="html"><code>http://localhost/1.txt == /var/www/html/1.txt。</code></pre>
+					</li>
+					<li>
+						除了DocumentRoot之外，也可以通过Alias定义新的映射关系，比如：
+						<pre class="code" data-language="html"><code>Alias "/image" "/ftp/pub/image"</code></pre>
+						不要忘记对/ftp/pub/image目录放宽操作权限，不然会被访问拒绝。
+					</li>
+				</ul>
+				<h2 id="mod-rewrite" class="content-subhead">URL重写和Proxy的配置<a href="#mod-rewrite" class="content-link" title="Heading anchor"></a></h2>
+				<ul>
+					<li>首先留意几个和问题排除相关的配置条目：ErrorLog, LogLevel，比如调整日志的详细度：</li>
+					<pre class="code" data-language="html"><code>LogLevel debug rewrite:trace8</code></pre>
+					这样就可以从日志看到重写的情况，是否Hit。
+					<li>还应该知道如何检查Apache配置文件是否正确，常见的命令：
+						<pre class="code" data-language="html"><code>apachectl -t 或者 httpd -t</code></pre>
+					</li>
+					<li>最常见的一个配置，如果请求的文件存在就发送它，如果不在就从后端取（Proxy）
+						<pre class="code" data-language="html"><code>RewriteEngine on
+RewriteCond /var/www/%{REQUEST_URI} !-f
+RewriteRule "/(.*)" "http://localhost:8080/$1" [P]</code></pre>
+					</li>
+				</ul>
+
+<!--				
 				<div id="quartz-cron-builder">
 					<form class="pure-form pure-form-stacked">
 						<fieldset>
@@ -28,46 +56,12 @@
 						</fieldset>
 					</form>
 					<p>每秒钟执行1次</p>
-					<form class="pure-form pure-form-stacked">
-						<fieldset>
-							<!--						<legend>点击对应字段修改表达式：</legend> -->
-
-							<div class="pure-g" th:remove="all-but-first">
-								<div class="pure-u-1-8" th:each="cronField: ${cronFields}">
-									<input th:id="${cronField.name} + '-field'" id="first-name" class="pure-u-23-24" type="text" placeholder="秒"
-									 th:placeholder="${cronField.iname}">
-								</div>
-
-								<div class="pure-u-1-8">
-									<input id="last-name" class="pure-u-23-24" type="text" placeholder="分">
-								</div>
-
-								<div class="pure-u-1-8">
-									<input id="email" class="pure-u-23-24" type="email" placeholder="时">
-								</div>
-
-								<div class="pure-u-1-8">
-									<input id="city" class="pure-u-23-24" type="text" placeholder="月天">
-								</div>
-
-								<div class="pure-u-1-8">
-									<input id="city" class="pure-u-23-24" type="text" placeholder="月">
-								</div>
-
-								<div class="pure-u-1-8">
-									<input id="city" class="pure-u-23-24" type="text" placeholder="周天">
-								</div>
-
-								<div class="pure-u-1-8">
-									<input id="city" class="pure-u-23-24" type="text" placeholder="年">
-								</div>
-							</div>
-						</fieldset>
-					</form>
 				</div>
-					<h2 id="common-layouts" class="content-subhead">关于Apache配置文件的简要说明</h2>
+					<h2 id="common-layouts" class="content-subhead">关于Apache配置文件的简要说明 <a href="#common-layout" class="content-link" title="Heading anchor"></a></h2>
 					<p>Apache的httpd.conf文件本身相当于一个默认的VirtualHost配置，如果你配置了VirtualHost，那么该VirtualHost的配置会覆盖默认配置。那么没有覆盖的配置呢？就会继承！</p>
+			-->
 			</div>
+
 		</div>
 	</div>
 	<script th:inline="javascript">
