@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.shell.result.TerminalAwareResultHandler;
 
-import com.go2wheel.weblizedutil.ApplicationState;
 import com.go2wheel.weblizedutil.LocaledMessageService;
 import com.go2wheel.weblizedutil.util.ExceptionUtil;
 import com.go2wheel.weblizedutil.value.FacadeResult;
@@ -23,13 +22,10 @@ public class FacadeResultHandler<T> extends TerminalAwareResultHandler<FacadeRes
 	@Autowired
 	private LocaledMessageService messageService;
 	
-	@Autowired
-	private ApplicationState applicationState;
-	
 	@Override
 	protected void doHandleResult(FacadeResult<T> result) {
 		try {
-			applicationState.setFacadeResult(result);
+//			applicationState.setFacadeResult(result);
 			String msg = "";
 			
 			T resultValue = result.getResult();

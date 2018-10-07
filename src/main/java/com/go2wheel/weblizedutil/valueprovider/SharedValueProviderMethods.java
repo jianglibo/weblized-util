@@ -16,7 +16,6 @@ import org.springframework.shell.CompletionContext;
 import org.springframework.shell.CompletionProposal;
 import org.springframework.stereotype.Service;
 
-import com.go2wheel.weblizedutil.ApplicationState;
 import com.go2wheel.weblizedutil.SettingsInDb;
 import com.go2wheel.weblizedutil.annotation.ObjectFieldIndicator;
 import com.go2wheel.weblizedutil.annotation.ShowPossibleValue;
@@ -33,9 +32,6 @@ public class SharedValueProviderMethods {
 
 	@Autowired
 	private ReusableCronDbService reusableCronDbService;
-
-	@Autowired
-	private ApplicationState applicationState;
 
 	public List<CompletionProposal> getOstypeProposals(String input) {
 		return settingsInDb.getListString(SettingsInDb.OSTYPE_PREFIX).stream().map(CompletionProposal::new).collect(Collectors.toList());

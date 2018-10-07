@@ -73,7 +73,7 @@ public class WeblizedUtilStartPointer {
 		// ConfigurableApplicationContext context =
 		// SpringApplication.run(StartPointer.class, fullArgs);
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(WeblizedUtilStartPointer.class)
-				.listeners(new ApplicationPidFileWriter("./bin/app.pid"), new ApplicationListener<ApplicationReadyEvent>() {
+				.listeners(new ApplicationPidFileWriter("./app.pid"), new ApplicationListener<ApplicationReadyEvent>() {
 					@Override
 					public void onApplicationEvent(ApplicationReadyEvent event) {
 				    	Path upgrade = Paths.get(UpgradeUtil.UPGRADE_FLAG_FILE);
@@ -130,10 +130,4 @@ public class WeblizedUtilStartPointer {
         DbProperties factory = new DbProperties();
         return factory;
     }
-//    
-//    @Bean
-//    public JavaMailSenderImpl mailSender() {
-//    	
-//    }
-
 }

@@ -1,0 +1,19 @@
+Add a user his default shell is pwsh.
+
+useradd jlb
+passwd jlb
+At client side, ssh-copy-id
+vi /etc/passwd change shell from /bin/bash to /usr/bin/pwsh.
+
+deploy:
+1.mkdir /opt/myapp
+2.upload weblized-util-0.0.1.zip to /opt/myapp/weblized-util-0.0.1.zip
+3.unzip to /opt/myapp/tmp folder.
+4.backup working
+3.rename tmp to working.
+
+tmux new-sessio -d -s asession /opt/weblized-util/tmp/ddd/kk.sh
+tmux attach -t 0
+tmux attach -t aname
+
+scp /cygdrive/c/Users/Administrator/Downloads/jdk-8u181-linux-x64.tar.gz root@192.168.33.110:/opt/java

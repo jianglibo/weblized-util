@@ -50,3 +50,5 @@ notingit/
 dbdata/
 _upgrade.properties
 testfield/
+deploy.properties
+app.pid

@@ -17,7 +17,6 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
-import com.go2wheel.weblizedutil.ApplicationState;
 import com.go2wheel.weblizedutil.LocaledMessageService;
 import com.go2wheel.weblizedutil.SecurityService;
 import com.go2wheel.weblizedutil.SettingsInDb;
@@ -66,10 +65,6 @@ public class BackupCommand {
 
 	@Autowired
 	private Environment environment;
-
-	@Autowired
-	private ApplicationState appState;
-
 
 	@Autowired
 	private UserAccountDbService userAccountDbService;
@@ -213,6 +208,9 @@ public class BackupCommand {
 		las.add(Locale.JAPANESE.getLanguage());
 		return las;
 	}
+	
+	@Autowired
+	private LocaledMessageService lms;
 
 	@ShellMethod(value = "支持的语言")
 	public String languageSet(String language) {
@@ -220,15 +218,16 @@ public class BackupCommand {
 			return String.format("Supported languages are: %s", String.join(", ", languageList()));
 		}
 		Locale l = Locale.forLanguageTag(language);
-		appState.setLocal(l);
+		lms.setLocale(l);
 		return "switch to language: " + language;
 	}
 
 
+	private FacadeResult<?> facadeResult;
 
 	@ShellMethod(value = "查看最后一个命令的详细执行结果")
 	public String facadeResultLast() {
-		FacadeResult<?> fr = appState.getFacadeResult();
+		FacadeResult<?> fr = facadeResult;
 		if (fr == null) {
 			return "";
 		} else {

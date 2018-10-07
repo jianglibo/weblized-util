@@ -2,7 +2,6 @@ package com.go2wheel.weblizedutil;
 
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +49,9 @@ public class AppEventListenerBean implements EnvironmentAware {
     
     @EventListener
     public void onApplicationStartedEvent(ApplicationStartedEvent event) throws IOException, UnexpectlyCallMethodException {
-    	ApplicationState.IS_PROD_MODE = !Arrays.stream(environment.getActiveProfiles()).anyMatch(p -> "dev".equals(p));
+//    	ApplicationState.IS_PROD_MODE = !Arrays.stream(environment.getActiveProfiles()).anyMatch(p -> "dev".equals(p));
     	createInitUsers();
-    	logger.info("application on dev mode: " + ApplicationState.IS_PROD_MODE);
+//    	logger.info("application on dev mode: " + ApplicationState.IS_PROD_MODE);
     	logger.info("onApplicationStartedEvent be called.");
     }
     

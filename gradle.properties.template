@@ -5,6 +5,6 @@ hostname=go2wheel.com
 # org.gradle.console=(auto,plain,rich,verbose)
 flyway.user=root
 flyway.password=123456
-flyway.locations=filesystem:src/main/resources/dev/db/migration/hsqldb
-flyway.url=jdbc:mysql://localhost:3306/weblizeddev?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+flyway.locations=filesystem:src/main/resources/db/migration/hsqldb
+flyway.url=jdbc:mysql://localhost:3306/weblized?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
 driver=com.mysql.cj.jdbc.Driver

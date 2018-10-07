@@ -30,7 +30,7 @@ eclipse {
     }
 }
 springBoot {
-    mainClassName = 'com.go2wheel.weblizedutil.StartPointer'
+    mainClassName = 'com.go2wheel.weblizedutil.WeblizedUtilStartPointer'
 //    buildInfo()
     buildInfo {
 		properties {
@@ -155,7 +155,7 @@ task wrapper(type: Wrapper) {
 }
 
 task copyFilesToArchive(type: Copy) {
-    from "${buildDir}/../explained.docx", "${buildDir}/../Vagrantfile", "${buildDir}/../start.bat", "${buildDir}/../stop.bat", "${buildDir}/../killapp.bat", "${buildDir}/../src/main/resources/application.properties"
+    from "${buildDir}/../explained.docx", "${buildDir}/../Vagrantfile", "${buildDir}/../start.sh","${buildDir}/../start.bat", "${buildDir}/../stop.bat", "${buildDir}/../killapp.bat", "${buildDir}/../src/main/resources/application.properties"
     
     from("${buildDir}/../") {
         include "notingit/**", "templates/**", "static/**"

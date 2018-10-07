@@ -3,7 +3,7 @@
   <!-- Configure the database connection here -->
   <jdbc>
     <driver>com.mysql.cj.jdbc.Driver</driver>
-    <url>jdbc:mysql://localhost:3306/weblizeddev?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=UTC</url>
+    <url>jdbc:mysql://localhost:3306/weblized?useUnicode=yes&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=UTC</url>
     <user>root</user>
     <password>123456</password>
     
@@ -87,7 +87,7 @@
       <inputCatalog>PUBLIC</inputCatalog>
       
        -->
-      <inputSchema>weblizeddev</inputSchema>
+      <inputSchema>weblized</inputSchema>
       <!-- 
       <syntheticIdentities>ID</syntheticIdentities>
        -->
