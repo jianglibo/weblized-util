@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import com.go2wheel.weblizedutil.MyAppSettings;
+import com.go2wheel.weblizedutil.SettingsInDb;
 import com.google.common.base.Splitter;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
@@ -39,7 +39,7 @@ public class ComboController implements ApplicationContextAware {
 	private ApplicationContext applicationContext;
 	
 	@Autowired
-	private MyAppSettings myAppsettings;
+	private SettingsInDb settingsInDb;
 	
 	private StreamingResponseBody errorRb(String errorMsg) {
 		return new StreamingResponseBody() {
@@ -86,7 +86,7 @@ public class ComboController implements ApplicationContextAware {
 	    return ResponseEntity
 	            .ok()
 	            .header("Content-Type", ct)
-	            .cacheControl(CacheControl.maxAge(myAppsettings.getCache().getCombo(), TimeUnit.DAYS))
+	            .cacheControl(CacheControl.maxAge(settingsInDb.getInteger("cache.combo.seconds", 63072000), TimeUnit.SECONDS))
 	            .eTag(version) // lastModified is also available
 	            .body(srb);
 	}

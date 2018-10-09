@@ -1,6 +1,6 @@
 param (
     [Parameter(Mandatory = $true, Position = 0)]
-    [ValidateSet("InstallScripts", "Deploy", "Rollback", "Start", "Stop")]
+    [ValidateSet("InstallScripts", "Deploy", "Rollback", "Start", "Stop", "Restart")]
     [string]$action,
     [parameter(Mandatory = $false,
         ValueFromRemainingArguments = $true)]
@@ -9,9 +9,8 @@ param (
 )
 
 $vb = $PSBoundParameters.ContainsKey('Verbose')
-
 if ($vb) {
-        $PSDefaultParameterValues['*:Verbose'] = $true
+    $PSDefaultParameterValues['*:Verbose'] = $true
 }
 
 $hints | Out-String | Write-Verbose
@@ -25,14 +24,14 @@ $dconfig = Get-DeployConfig -ConfigFile $ConfigFile
 
 switch ($action) {
     "InstallScripts" {
-        Copy-PsScriptToServer -dconfig $dconfig
+        Copy-PsScriptToServer -dconfig $dconfig -verbose:$vb
         break
     }
     "Deploy" {
-        Start-DeployClientSide -dconfig $dconfig
+        Start-DeployClientSide -dconfig $dconfig -verbose:$vb
         break
     }
     Default {
-        Invoke-ServerRunningPs1 -dconfig $dconfig -action $action $hints
+        Invoke-ServerRunningPs1 -dconfig $dconfig -action $action -verbose:$vb $hints
     }
 }

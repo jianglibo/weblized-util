@@ -1,0 +1,118 @@
+<!doctype html>
+<html th:replace="~{layout :: layout(~{}, ~{::title}, ~{},  ~{::div.header}, ~{::div.content}, ~{::script})}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Linux Expect Explained</title>
+</head>
+
+<body>
+	<div id="layout">
+		<div id="main">
+			<div class="header">
+				<h1>Linux Expect Explained</h1>
+				<h2>Expect入门</h2>
+			</div>
+
+			<div class="content">
+				<h2 id="quota" class="content-subhead">引号的作用<a href="#quota" class="content-link" title="Heading anchor"></a></h2>
+				<p>
+					TCL里面一切都是String，因此引号的作用没有和String紧密联系在一起。双引号的作用主要是2个，一是解析变量（特有），二是可以包含空格（{}符号也可以。）。
+						<pre class="code" data-language="tcl"><code>
+puts '"
+puts '''
+puts '""
+puts "\ b 1"
+set x 1
+puts "$x s"
+</code></pre>
+				</p>
+				<h2 id="subcommand" class="content-subhead">命令子句<a href="#command" class="content-link" title="Heading anchor"></a></h2>
+				<p>
+					方括号内可以引入命令，记住TCL一切都是命令。set没什么特殊性，只不过它是一行的第一个单词，所以被解释成命令(Command)。
+						<pre class="code" data-language="tcl"><code>
+set digits 245
+puts 01[string replace $digits 1 1 34]67
+
+set set kkk
+puts $set
+</code></pre>
+				</p>
+				<h2 id="if" class="content-subhead">if命令<a href="#if" class="content-link" title="Heading anchor"></a></h2>
+				<p>
+					if也是命令，条件子项和expr命令的参数一致，比如 1 == 1， a eq b。也可以是yes,no,true,false,0,1等。
+						<pre class="code" data-language="tcl"><code>
+if {first condition} {
+    thing to do if the first condition succeeds
+} elseif {second condition} {
+    thing to do if the first fails, but the second condition succeeds
+} else {
+    what to do if none of the conditions match - this one is optional,
+    but typically good practice to anticipate unexpected responses
+}
+</code></pre>
+				</p>
+				<h2 id="incr" class="content-subhead">incr命令<a href="#incr" class="content-link" title="Heading anchor"></a></h2>
+				<p>
+					incr是将参数递增，同时返回参数的新的值。主要是在expect里面可以用来计数。
+						<pre class="code" data-language="tcl"><code>
+set c 0
+incr c
+puts $c 打印出1
+</code></pre>
+				</p>
+				<h2 id="argv" class="content-subhead">argv命令行参数<a href="#argv" class="content-link" title="Heading anchor"></a></h2>
+				<p>
+					expect的命令行参数保存在$argv里面，$argc是参数的个数。
+						<pre class="code" data-language="tcl"><code>
+</code></pre>
+				</p>
+				<h2 id="sample1" class="content-subhead">一个简单的Expect例子<a href="#sample1" class="content-link" title="Heading anchor"></a></h2>
+				<p>
+						<pre class="code" data-language="tcl"><code>
+#!/usr/bin/expect
+set username [lindex $argv 0]
+set password [lindex $argv 1]
+set timeout 20
+spawn -noecho mysql "-u$username" -p
+set c 0
+log_user 0
+expect {
+    -re {password:\s+$} {
+        send "$password\r";
+        exp_continue
+    }
+    -re {>\s+$} {
+        if {$c == 0} {
+          incr c
+          send "show databases;\n"
+          exp_continue
+        } else {
+           puts $expect_out(buffer)
+           send "exit\n"
+        }
+    }
+}
+</code></pre>
+假设上述代码保存在文件a.sh。那么执行./a root 123456就会把mysql的数据库列表列出来。逐行分析代码：
+				</p>
+<ol>
+	<li>#!/usr/bin/expect 接下来的代码有expect来解释执行</li>
+	<li>set username [lindex $argv 0] 第一个参数是用户名</li>
+	<li>set password [lindex $argv 1] 第二个参数是密码</li>
+	<li>set timeout 20 等待时间超过20s，timeout分支就会被执行，如果没有timeout就结束expect。如果eof分支被触发，timeout分支就不会执行了。</li>
+	<li>spawn -noecho mysql "-u$username" -p 执行需要交互的命令，-noecho屏蔽命令行的echo</li>
+	<li>set c 0 设置一个c变量，值为0。当第一此看到mysql命令提示符的时候，会递增1。</li>
+	<li>log_user 0 屏蔽默认的输出，那么可以由程序控制输出哪些内容。</li>
+	<li>-re {password:\s+} 正则匹配密码提示符。 当看到提示时，send "$password\r";输入密码，注意双引号，双引号会解析内含的变量。exp_continue，继续运行expect而不是默认的退出。</li>
+	<li>-re {>\s+$} 匹配mysql交互提示符，if {$c == 0} {表示第一个匹配，incr c递增c变量，它的值变成了1； send "show databases;\n"发送sql命令；exp_continue继续expect，再次捕获mysql提示符时，因为c的值不再是0，因此进入else分支。</li>
+	<li>puts $expect_out(buffer)输出已读的内容，比如被控制程序输出abcd， 在expect cd的情况下，$expect_out(buffer)的内容等于ab，$expect_out(0,string)的值是cd</li>
+	<li></li>
+</ol>
+			</div>
+		</div>
+	</div>
+	<script th:inline="javascript">
+		var buildCtx = /*[[${buildCtx}]]*/ null;
+	</script>
+</body>
+</html>

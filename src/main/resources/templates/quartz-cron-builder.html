@@ -1,8 +1,9 @@
 <!doctype html>
-<html th:replace="~{layout :: layout(~{::title}, ~{},  ~{::div.header}, ~{::div.content}, ~{::script})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{layout :: layout(~{::meta}, ~{::title}, ~{},  ~{::div.header}, ~{::div.content}, ~{::script})}" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<title>Index Page</title>
+	<title th:text="#{title.quartzcronbuilder}">Quartz cron expression builder.</title>
+	<meta name="description" content="" th:content="#{description.quartzcronbuilder}">
 </head>
 
 <body>

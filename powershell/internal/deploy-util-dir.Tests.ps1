@@ -4,7 +4,7 @@ $sut = "${here}\deploy-util.ps1"
 . "$sut"
 . "$here\SshInvoker.ps1"
 . "$here\deploy-config.ps1"
-$ConfigFile = "${psDir}\deploy.json"
+$ConfigFile = "${psDir}\deploy-dev.json"
 
 Describe "deploy-util" {
     $workingDir = Join-Path $TestDrive "folder\working"

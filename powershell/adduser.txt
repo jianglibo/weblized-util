@@ -17,3 +17,4 @@ tmux attach -t 0
 tmux attach -t aname
 
 scp /cygdrive/c/Users/Administrator/Downloads/jdk-8u181-linux-x64.tar.gz root@192.168.33.110:/opt/java
+mysql show engines;

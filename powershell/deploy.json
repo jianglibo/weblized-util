@@ -1,6 +1,7 @@
 {
     "basedir": "/opt/weblized-util",
-    "hostname": "192.168.33.110",
-    "ifile": "C:\\Users\\Administrator\\192.168.33.110.ifile",
-    "username": "root"
+    "hostname": "go2wheel.com",
+    "ifile": "C:\\Users\\admin\\office_go2wheel",
+    "username": "root",
+    "tmuxsess": "weblized-util"
 }

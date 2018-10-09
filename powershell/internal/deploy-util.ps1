@@ -81,6 +81,19 @@ function Backup-LocalDirectory {
     $nx
 }
 
+function Test-Verbose {
+    [bool](Write-Verbose ([String]::Empty) 4>&1)
+}
+
+function Get-Verbose {
+    $b = [bool](Write-Verbose ([String]::Empty) 4>&1)
+    if ($b) {
+        "-Verbose"
+    }
+    else {
+        ""
+    }
+}
 
 function Start-DeployClientSide {
     param (
@@ -92,6 +105,8 @@ function Start-DeployClientSide {
     $sshInvoker = Get-SshInvoker -dconfig $dconfig
 
     $MkdirStr = "rm -rf {0}/*;mkdir -p {1};mkdir -p {2};mkdir -p {3}" -f $dconfig.tmpDir, $dconfig.deployDir, $dconfig.scriptDir, $dconfig.tmpDir
+    $MkdirStr | Write-Verbose
+
     $sshInvoker.invoke($MkdirStr)
 
     # /opt/weblized/tmp/xxx.zip
@@ -108,16 +123,16 @@ function Start-DeployClientSide {
     # $scriptLines = ,'Start-DeployServerSide'
     # $rscript = New-RemoteScriptFile -sshInvoker $sshInvoker -DeployConfig $dconfig -scriptLines $scriptLines
     # $sshInvoker.Invoke("pwsh -f $rscript")
-    $rcmd = "pwsh -f {0} -action Deploy {1}" -f $dconfig.runningps1, $uploaded
+    $rcmd = "pwsh -f {0} -action Deploy {1} {2}" -f $dconfig.runningps1, (Get-Verbose), $uploaded
+    $rcmd | Write-Verbose
     $sshInvoker.Invoke($rcmd)
-    $sshInvoker
+    $sshInvoker | Out-String | Write-Verbose
 }
 
 function Invoke-ServerRunningPs1 {
     param (
         [Parameter(Mandatory = $true, Position = 0)][DeployConfig]$dconfig,
         [Parameter(Mandatory = $true, Position = 1)]
-        [ValidateSet("Rollback", "Start", "Stop")]
         [string]$action,
         [parameter(Mandatory = $false,
             ValueFromRemainingArguments = $true)]
@@ -125,16 +140,16 @@ function Invoke-ServerRunningPs1 {
         $hints
     )
     $sshInvoker = Get-SshInvoker -dconfig $dconfig
-    $rcmd = "pwsh -f {0} -action Deploy {1}" -f $dconfig.runningps1, ($hints -join ' ')
-    $rcmd | Write-Verbose
-    # $sshInvoker.Invoke($rcmd)
+    
+    $rcmd = "pwsh -f {0} -action {1} {2} {3}" -f $dconfig.runningps1, $action, (Get-Verbose), ($hints -join ' ')
+    $rcmd | Out-String | Write-Verbose
+    $sshInvoker.Invoke($rcmd)
 }
 
 function Stop-JavaProcess {
     param (
         [Parameter(Mandatory = $true, Position = 0)][DeployConfig]$dconfig
     )
-
     $myapppid = Get-Content -Path $dconfig.pidFile -ErrorAction SilentlyContinue
     if ($myapppid) {
         $myappProcess = Get-Process -Id $myapppid -ErrorAction SilentlyContinue
@@ -148,15 +163,29 @@ function Stop-JavaProcess {
     }
 }
 
+function Test-TmuxSession {
+    param (
+        [Parameter(Mandatory = $true, Position = 0)][string]$tmuxsess
+    )
+    tmux ls | Where-Object {$_ -match "^${tmuxsess}:"} | Select-Object -First 1
+}
+
 function Start-Tmux {
     param (
         [Parameter(Mandatory = $true, Position = 0)][DeployConfig]$dconfig
     )
-    $startshc = Get-Content -Path $dconfig.startSh | ForEach-Object {$_ -replace 'serverWorkingDir', $dconfig.workingDir} | ForEach-Object {$_.Trim()}
-    $startshc | Set-Content -Path $dconfig.startSh
-    chmod a+x $dconfig.startSh
-    "start run: tmux new-sessio -d -s asession $($dconfig.startSh)"
-    tmux new-sessio -d -s asession $dconfig.startSh
+    $tmuxsess = $dconfig.config.tmuxsess
+    if ((Test-TmuxSession -tmuxsess $tmuxsess)) {
+        "tmux with ${tmuxsess} session name is runing now. Please stop first.`n"
+    }
+    else {
+        $startshc = Get-Content -Path $dconfig.startSh | ForEach-Object {$_ -replace 'serverWorkingDir', $dconfig.workingDir} | ForEach-Object {$_.Trim()}
+        $startshc | Set-Content -Path $dconfig.startSh
+        chmod a+x $dconfig.startSh
+        "start run: tmux new-sessio -d -s $($dconfig.config.tmuxsess) $($dconfig.startSh)`n"
+        tmux new-sessio -d -s asession $dconfig.startSh
+    }
+
 }
 
 function Start-RollbackServerSide {
@@ -192,7 +221,7 @@ function Start-DeployServerSide {
     }
 
     if (Test-Path $dconfig.workingDir) {
-        throw "move working dir faile."
+        throw "move working dir faile.`n"
     }
 
     Move-Item -Path $dconfig.unzipDir -Destination $dconfig.workingDir

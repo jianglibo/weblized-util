@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
@@ -35,7 +34,7 @@ public class WeblizedUtilWebMvcConfig implements WebMvcConfigurer {
 	private ApplicationContext applicationContext;
 	
 	@Autowired
-	private MyAppSettings myAppSettings;
+	private SettingsInDb settingsInDb;
 	
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
@@ -159,15 +158,15 @@ public class WeblizedUtilWebMvcConfig implements WebMvcConfigurer {
         
         registry.addResourceHandler("/pure/**")
         .addResourceLocations("classpath:/public/pure/")
-        .setCachePeriod(31536000);
+        .setCachePeriod(settingsInDb.getInteger("cache.pure.seconds", 63072000));
 
         registry.addResourceHandler("/jquery/**")
         .addResourceLocations("classpath:/public/jquery/")
-        .setCachePeriod(31536000);
+        .setCachePeriod(settingsInDb.getInteger("cache.jquery.seconds", 63072000));
 
         registry.addResourceHandler("/cache-forever/**")
         .addResourceLocations("classpath:/cache-forever/")
-        .setCachePeriod(myAppSettings.getCache().getCombo());
+        .setCachePeriod(settingsInDb.getInteger("cache.forever.seconds", 63072000));
 	}
 	
 //	@Override
