@@ -7,8 +7,8 @@ stop NetworkManager, disable NetworkManager service,
 #>
 
 function Update-NetworkManagerState {
-    Param([ValidateSet("enable", "disable")][parameter(Mandatory=$True)][string]$action,
-        [ValidateSet("centos7", "unbuntu")][string]$ostype="centos7")
+    Param([ValidateSet("enable", "disable")][parameter(Mandatory = $True)][string]$action,
+        [ValidateSet("centos7", "unbuntu")][string]$ostype = "centos7")
     $nm = "NetworkManager"
     
     switch ($action) {
@@ -28,15 +28,15 @@ function Update-NetworkManagerState {
 }
 
 function Install-Alternatives {
-   Param(
-       [Parameter(Mandatory=$true)]
-       [string]$link,
-       [Parameter(Mandatory=$true)]
-       [string]$name,
-       [Parameter(Mandatory=$true)]
-       [string]$path,
-       [Parameter(Mandatory=$true)]
-       [long]$priority
+    Param(
+        [Parameter(Mandatory = $true)]
+        [string]$link,
+        [Parameter(Mandatory = $true)]
+        [string]$name,
+        [Parameter(Mandatory = $true)]
+        [string]$path,
+        [Parameter(Mandatory = $true)]
+        [long]$priority
     )
 
     $aname = alternatives --display $name | Where-Object {$_ -match ".*priority\s+(\d+).*"} | Select-Object -First 1
@@ -46,19 +46,19 @@ function Install-Alternatives {
             $priority = $curPriority + 100
         }
     }
-    $cmd = "alternatives --install {0} {1} {2} {3}" -f $link,$name,$path,$priority
+    $cmd = "alternatives --install {0} {1} {2} {3}" -f $link, $name, $path, $priority
     $cmd | Write-HostIfInTesting
     $cmd | Invoke-Expression
     alternatives --auto $name
 }
 
 function Set-HostName {
-    Param([String]$hostname, [string]$ostype="centos7")
+    Param([String]$hostname, [string]$ostype = "centos7")
     hostnamectl --static set-hostname $hostname
 }
 
 function Install-NtpService {
-    Param([string]$ostype="centos7")
+    Param([string]$ostype = "centos7")
     yum install -y ntp ntpdate
     systemctl enable ntpd
     ntpdate pool.ntp.org
@@ -66,7 +66,7 @@ function Install-NtpService {
 }
 
 function Uninstall-NtpService {
-    Param([string]$ostype="centos7")
+    Param([string]$ostype = "centos7")
     if (Test-ServiceRunning -serviceName "ntpd") {
         systemctl stop ntpd
     }
@@ -74,22 +74,22 @@ function Uninstall-NtpService {
 }
 
 function Test-ServiceRunning {
-    Param([parameter(Mandatory=$True)][String]$serviceName)
+    Param([parameter(Mandatory = $True)][String]$serviceName)
     systemctl status $serviceName | Select-Object -First 6 | Where-Object {$_ -match "\s+Loaded:.*\(running\)"} | Select-Object -First 1
 }
 
 function Test-ServiceExists {
-    Param([parameter(Mandatory=$True)][String]$serviceName)
+    Param([parameter(Mandatory = $True)][String]$serviceName)
     systemctl status $serviceName| Select-Object -First 6 | Where-Object {$_ -match "\s+Active:\s*not-found"} | Select-Object -First 1
 }
 
 function Test-ServiceEnabled {
-    Param([parameter(Mandatory=$True)][String]$serviceName)
+    Param([parameter(Mandatory = $True)][String]$serviceName)
     (systemctl is-enabled $serviceName | Out-String) -match "enabled"
 }
 
 function Update-FirewallItem {
-    Param($ports, [ValidateSet("tcp", "udp")][String]$prot="tcp", [switch]$delete=$False)
+    Param($ports, [ValidateSet("tcp", "udp")][String]$prot = "tcp", [switch]$delete = $False)
     process {
         if ($ports -match ',') {
             $ports = $ports -split ','
@@ -101,9 +101,9 @@ function Update-FirewallItem {
             }
             catch {
                 $Error.Clear()
-#                if ($fromBash -match "Created symlink from") {
-#                    $Error.Clear()
-#                }
+                #                if ($fromBash -match "Created symlink from") {
+                #                    $Error.Clear()
+                #                }
             }
         }
 
@@ -112,7 +112,8 @@ function Update-FirewallItem {
         }
         if ($delete) {
             $action = "--remove-port"
-        } else {
+        }
+        else {
             $action = "--add-port"
         }
         try {
@@ -123,7 +124,8 @@ function Update-FirewallItem {
         catch {
             if ($fromBash -match "Nothing to do") {
                 $Error.Clear()
-            } else {
+            }
+            else {
                 $fromBash
             }
         }
@@ -138,17 +140,17 @@ function Get-FirewallOpenPorts {
 }
 
 function Find-LinuxUser {
-    Param([parameter(Mandatory=$True)][String]$username)
+    Param([parameter(Mandatory = $True)][String]$username)
     Get-Content /etc/passwd | Where-Object {$_ -match "^${username}:"} | Select-Object -First 1
 }
 
 function Find-LinuxGroup {
-    Param([parameter(Mandatory=$True)][String]$groupname)
+    Param([parameter(Mandatory = $True)][String]$groupname)
     Get-Content /etc/group | Where-Object {$_ -match "^${groupname}:"} | Select-Object -First 1
 }
 
 function New-LinuxUser {
-    Param([parameter(Mandatory=$True)][String]$username,[string]$groupname,[switch]$createHome)
+    Param([parameter(Mandatory = $True)][String]$username, [string]$groupname, [switch]$createHome)
     if ($groupname) {
         if (-not (Find-LinuxGroup $groupname)) {
             groupadd -f $groupname
@@ -161,17 +163,21 @@ function New-LinuxUser {
                 usermod -g $groupname $username
             }
         }
-    } else {
+    }
+    else {
         if ($createHome) {
             if ($groupname) {
                 useradd -m -g $groupname $username
-            } else {
+            }
+            else {
                 useradd -m $username
             }
-        } else {
+        }
+        else {
             if ($groupname) {
                 useradd -M -s /sbin/nologin -g $groupname $username
-            } else {
+            }
+            else {
                 useradd -M -s /sbin/nologin $username
             }
         }
@@ -179,7 +185,7 @@ function New-LinuxUser {
 }
 
 function Remove-LinuxUser {
-    Param([parameter(Mandatory=$True)][String]$username)
+    Param([parameter(Mandatory = $True)][String]$username)
     if (Find-LinuxUser $username) {
         userdel -f $username
     }
@@ -233,7 +239,7 @@ function Remove-LinuxUser {
 # su -s /bin/bash -c "/opt/tmp8TEpPH.sh 1 2 3" abc
 
 function Start-RunUser-String {
-    Param([string]$shell="/bin/bash", [string]$scriptcmd, [string]$user,[string]$group)
+    Param([string]$shell = "/bin/bash", [string]$scriptcmd, [string]$user, [string]$group)
     $user = $user | Trim-All
     if (! $user) {
         $user = $env:USER
@@ -242,25 +248,25 @@ function Start-RunUser-String {
         $group = $user
     }
     New-LinuxUser -username $user -groupname $group
-    "runuser -s /bin/bash -c '{0}'  {1}" -f $scriptcmd,$user
+    "runuser -s /bin/bash -c '{0}'  {1}" -f $scriptcmd, $user
 }
 
 function Start-Nohup {
-    Param([string]$shell="/bin/bash", [parameter(ValueFromPipeline=$True, Mandatory=$True)][string]$scriptcmd, [string]$user,[string]$group,[int]$NICENESS, [string]$logfile,[string]$pidfile)
+    Param([string]$shell = "/bin/bash", [parameter(ValueFromPipeline = $True, Mandatory = $True)][string]$scriptcmd, [string]$user, [string]$group, [int]$NICENESS, [string]$logfile, [string]$pidfile)
     $newcmd = "nohup nice -n $NICENESS $scriptcmd > `"$logfile`" 2>&1 < /dev/null &"
     $newcmd = Start-RunUser-String -shell $shell -scriptcmd $newcmd -user $user -group $group
     $line2 = 'sleep 1'
     $line3 = 'echo $! >' + $pidfile
     $tmp = New-TemporaryFile
-    $newcmd,$line2,$line3 | Out-File $tmp -Encoding ascii
+    $newcmd, $line2, $line3 | Out-File $tmp -Encoding ascii
     Write-Host "$tmp"
     bash "$tmp"
     $tmp | Write-HostIfInTesting
-#    Remove-Item $tmp -Force
+    #    Remove-Item $tmp -Force
 }
 
 function Start-RunUser {
-    Param([string]$shell="/bin/bash", [parameter(ValueFromPipeline=$True, Mandatory=$True)][string]$scriptcmd, [string]$user,[string]$group,[switch]$background)
+    Param([string]$shell = "/bin/bash", [parameter(ValueFromPipeline = $True, Mandatory = $True)][string]$scriptcmd, [string]$user, [string]$group, [switch]$background)
     $user = $user | Trim-All
     if (-not $user) {
         $user = $env:USER
@@ -269,12 +275,13 @@ function Start-RunUser {
         $group = $user
     }
     New-LinuxUser -username $user -groupname $group
-#    chown $user $scriptfile | Out-Null
-#    chmod u+x $scriptfile | Out-Null
-    $torun = 'runuser -s /bin/bash -c "{0}"  {1}' -f $scriptcmd,$user 
+    #    chown $user $scriptfile | Out-Null
+    #    chmod u+x $scriptfile | Out-Null
+    $torun = 'runuser -s /bin/bash -c "{0}"  {1}' -f $scriptcmd, $user 
     if ($background) {
-         $torun | Invoke-Expression
-    } else {
+        $torun | Invoke-Expression
+    }
+    else {
         $torun | Invoke-Expression
     }
     
@@ -282,7 +289,7 @@ function Start-RunUser {
 }
 
 function Invoke-Chown {
-    Param([string]$user, [string]$group=$null, [parameter(ValueFromPipeline=$True, Mandatory=$True)][string]$Path)
+    Param([string]$user, [string]$group = $null, [parameter(ValueFromPipeline = $True, Mandatory = $True)][string]$Path)
     process {
         if (!$group) {
             $group = $user
@@ -296,10 +303,10 @@ function Invoke-Chown {
 }
 
 function Save-EnvToProfile {
-    Param([parameter(Mandatory=$True)][string]$key, [parameter(Mandatory=$True)][string]$value)
+    Param([parameter(Mandatory = $True)][string]$key, [parameter(Mandatory = $True)][string]$value)
     $f = "/etc/profile.d/easyinstaller.sh" 
     if ( $f | Test-Path) {
         $lines = Get-Content $f
     }
-    "$key=$value","export $key" + $lines | Out-File $f -Encoding ascii
+    "$key=$value", "export $key" + $lines | Out-File $f -Encoding ascii
 }

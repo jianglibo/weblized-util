@@ -8,13 +8,13 @@ Describe "PsCommon" {
     }
     It "should handle out context" {
         $twoReached = $False
-        (1,2,3 | ForEach-Object {if ($_ -gt 1) {$twoReached = $True; $_}} | ForEach-Object {if ($twoReached) {$_}}).Count | Should Be 2
+        (1, 2, 3 | ForEach-Object {if ($_ -gt 1) {$twoReached = $True; $_}} | ForEach-Object {if ($twoReached) {$_}}).Count | Should Be 2
     }
     It "scriptmethod parameters" {
         $oo = New-Object -TypeName PSObject
         $oo | Add-Member -MemberType ScriptMethod -Name appp -Value {
-             Param([String]$fileToWrite)
-             $fileToWrite
+            Param([String]$fileToWrite)
+            $fileToWrite
         }
         $oo.appp("abaac") | Should Be "abaac"
     }
@@ -24,12 +24,12 @@ Describe "PsCommon" {
         set n [expr 1 + 1]
         puts $n
 '@
-    Invoke-StringCode -execute tclsh -content $c | Should Be "2"
+        Invoke-StringCode -execute tclsh -content $c | Should Be "2"
     }
     It "should alter resultFile" {
         $tmp = New-TemporaryFile
         "{}" | Out-File -FilePath $tmp -Encoding ascii
-        Set-ResultFileItem -resultFile $tmp -keys a,b,c -value 55
+        Set-ResultFileItem -resultFile $tmp -keys a, b, c -value 55
         $rh = Get-Content $tmp | ConvertFrom-Json
         $rh.a.b.c | Should Be 55
         $rh.value | Should Be $null
@@ -49,7 +49,7 @@ Describe "PsCommon" {
         $rh = Get-Content $tmp | ConvertFrom-Json
         $rh.a | Should Be 55
 
-#        "" | Out-File -FilePath notexistsfile -Encoding ascii
+        #        "" | Out-File -FilePath notexistsfile -Encoding ascii
         Set-ResultFileItem -resultFile $tmp -keys a 55
         $rh = Get-Content $tmp | ConvertFrom-Json
         $rh.a | Should Be 55
@@ -120,11 +120,11 @@ Describe "PsCommon" {
     It "should handle ip addr" {
         $ipaddrout = Join-Path -Path $here -ChildPath "fixtures\ipaddr.txt"
         (Get-Content $ipaddrout | ForEach-Object -Begin {$curg = $null} -Process {
-            if($_ -match "^\d+:\s*(\w+):") {
-                $curg = $Matches[1]
-            }
-            @{gp=$curg;value=$_}
-        } -End {$ht} | Group-Object -AsHashTable -AsString -Property {$_["gp"]}).Count | Should Be 3
+                if ($_ -match "^\d+:\s*(\w+):") {
+                    $curg = $Matches[1]
+                }
+                @{gp = $curg; value = $_}
+            } -End {$ht} | Group-Object -AsHashTable -AsString -Property {$_["gp"]}).Count | Should Be 3
     }
 
     It "can handle kvFile" {
@@ -143,7 +143,7 @@ Describe "PsCommon" {
     }
 
     It "Should handle select object" {
-        1,2,3 | Select-Object @{N="k";E={$_ + 1}} | Select-Object -ExpandProperty k | Write-Output -NoEnumerate | Should Be @(2,3,4)
+        1, 2, 3 | Select-Object @{N = "k"; E = {$_ + 1}} | Select-Object -ExpandProperty k | Write-Output -NoEnumerate | Should Be @(2, 3, 4)
     }
 
     It "should handle addHost" {
@@ -176,7 +176,7 @@ Describe "PsCommon" {
         }
 
         t-f "1,2,3" | Should Be "1,2,3"
-        t-f 1,2,3 | Should Be "1,2,3"
+        t-f 1, 2, 3 | Should Be "1,2,3"
         t-f "1.2.3" | Should Be "1,2,3"
     }
 
@@ -207,7 +207,7 @@ Describe "PsCommon" {
 
         $efe.software.fullName | Should Be "zookeeper-CentOs7-3.4.9"
 
-        $efe.resultFolder -replace "\\","/" | Should Be "/opt/easyinstaller/results/zookeeper-CentOs7-3.4.9"
+        $efe.resultFolder -replace "\\", "/" | Should Be "/opt/easyinstaller/results/zookeeper-CentOs7-3.4.9"
 
         Test-Path $efe.resultFolder  -PathType Container | Should Be $True
 
@@ -228,7 +228,7 @@ Describe "PsCommon" {
         Test-Path ($tmp.FullName + ".origin") -PathType Leaf | Should Be $True
 
         Set-Content -Path $tmp -Value 'a', 'ZOOBINDIR="${ZOOBINDIR:-/usr/bin}"', 'b', 'c'
-        Add-Lines -FilePath $tmp "^ZOOBINDIR=" -lines "hello","1","2" -after
+        Add-Lines -FilePath $tmp "^ZOOBINDIR=" -lines "hello", "1", "2" -after
         $c = Get-Content $tmp
         $c[2] | Should Be "hello"
         $c.Count | Should Be 7
@@ -237,8 +237,8 @@ Describe "PsCommon" {
     }
 
     It "about replace" {
-        "abc" -replace "a","b" | Should Be "bbc"
-        "0ab1c2" -replace "[a-z]+","b" | Should Be "0b1b2"
+        "abc" -replace "a", "b" | Should Be "bbc"
+        "0ab1c2" -replace "[a-z]+", "b" | Should Be "0b1b2"
     }
 
     It "should by reference" {
@@ -247,7 +247,7 @@ Describe "PsCommon" {
             $ht.newkey = "123"
         }
 
-        $outht = @{x=5}
+        $outht = @{x = 5}
         t-t $outht
 
         $outht.newkey | Should Be "123"
@@ -255,22 +255,22 @@ Describe "PsCommon" {
 
     It "should Out-File work" {
         $t = New-TemporaryFile
-        @(1,2,3) | Out-File -FilePath $t
-        Get-Content $t | Write-Output -NoEnumerate | Should Be @(1,2,3)
+        @(1, 2, 3) | Out-File -FilePath $t
+        Get-Content $t | Write-Output -NoEnumerate | Should Be @(1, 2, 3)
     }
 
     It "is more about function" {
         function Get-Pipeline {
-          process {"The value is: $_"}
+            process {"The value is: $_"}
         }
-        1,2 | Get-Pipeline |Write-Output -NoEnumerate| Should Be @("The value is: 1", "The value is: 2")
+        1, 2 | Get-Pipeline |Write-Output -NoEnumerate| Should Be @("The value is: 1", "The value is: 2")
 
         function Get-PipelineBeginEnd {
-          begin {"Begin: The input is $input"}
-          end {"End:   The input is $input" }
-       }
+            begin {"Begin: The input is $input"}
+            end {"End:   The input is $input" }
+        }
 
-       1,2 | Get-PipelineBeginEnd | Write-Output -NoEnumerate | Should Be @("Begin: The input is ","End:   The input is 1 2")
+        1, 2 | Get-PipelineBeginEnd | Write-Output -NoEnumerate | Should Be @("Begin: The input is ", "End:   The input is 1 2")
     }
 
     It "should handle remain args" {
@@ -281,8 +281,8 @@ Describe "PsCommon" {
 
         (t-t 1 "s" 1 2 3 4).length | Should Be 4
         (t-t 1 "s" 1 2 3 4).getType() | Should Be "System.Object[]"
-        (t-t 1 "s" 1,2,3,4).length | Should Be 4
-        (t-t 1 "s" 1,2,3,4).getType() | Should Be "System.Object[]"
+        (t-t 1 "s" 1, 2, 3, 4).length | Should Be 4
+        (t-t 1 "s" 1, 2, 3, 4).getType() | Should Be "System.Object[]"
     }
 
     It "handle new-ExecuteLine" {
@@ -316,24 +316,24 @@ Describe "PsCommon" {
         $myf = $tmp | Split-Path -Parent | Join-Path -ChildPath "hello"
 
         # out-file will auto append newline.
-        "a","b","c" | Out-File -FilePath $myf
+        "a", "b", "c" | Out-File -FilePath $myf
         (Get-Content -Path $myf | Measure-Object).Count | Should Be 3
         (Get-Content -Path $myf) -join "," | Should Be "a,b,c"
 
         # out-file will auto append newline.
-        "a","b","c" | Out-File -FilePath $myf -NoNewline
+        "a", "b", "c" | Out-File -FilePath $myf -NoNewline
         (Get-Content -Path $myf | Measure-Object).Count | Should Be 1
         (Get-Content -Path $myf) -join "," | Should Be "abc"
 
         # if inputobject is a string contains newline, even there is -NoNewline option, newline in the string is still keeped.
-         "a`rb`rc" | Out-File -FilePath $myf -NoNewline
+        "a`rb`rc" | Out-File -FilePath $myf -NoNewline
         (Get-Content -Path $myf | Measure-Object).Count | Should Be 3
         (Get-Content -Path $myf) -join "," | Should Be "a,b,c"
 
-        [PSCustomObject]@{name=$myf;content="abc"} | Write-TextFile
+        [PSCustomObject]@{name = $myf; content = "abc"} | Write-TextFile
         Get-Content -Path $myf | Write-Output -NoEnumerate | Should Be "abc"
 
-        [PSCustomObject]@{name=$myf;content="abc`r`nde`tf"} | Write-TextFile
+        [PSCustomObject]@{name = $myf; content = "abc`r`nde`tf"} | Write-TextFile
         (Get-Content -Path $myf | Measure-Object).Count  |  Should Be 2
         (Get-Content -Path $myf)[0] | Should Be "abc"
 
@@ -373,7 +373,7 @@ Describe "PsCommon" {
 
     It "should parse return value" {
 
-    $c = @"
+        $c = @"
     a
         ------RETURN_TO_CLIENT_BEGIN------xs
         {
@@ -386,12 +386,12 @@ Describe "PsCommon" {
         uv------RETURN_TO_CLIENT_END------
     b
 "@
-    $v =  $c | ConvertFrom-ReturnToClientInstallResult
-    $v | Write-Host
-    $v.h.b | Should Be 55
+        $v = $c | ConvertFrom-ReturnToClientInstallResult
+        $v | Write-Host
+        $v.h.b | Should Be 55
     }
 
     It "should equal array" {
-        1,2,3 | Should Be 3,1,2
+        1, 2, 3 | Should Be 3, 1, 2
     }
 }

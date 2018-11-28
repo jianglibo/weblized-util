@@ -15,7 +15,7 @@ Describe "Centos7Util" {
 
         Update-NetworkManagerState -action enable
         Test-ServiceEnabled -serviceName $networkmanager | Should Be $True
-#        Test-ServiceRunning -serviceName $networkmanager | Should Be $True
+        #        Test-ServiceRunning -serviceName $networkmanager | Should Be $True
 
         Test-ServiceExists -serviceName "heloabc" | Should Be $False
     }

@@ -7,10 +7,12 @@ $_DOWNLOAD_BEGIN_ = "------DOWNLOAD_TO_CLIENT_BEGIN------"
 $_DOWNLOAD_END_ = "------DOWNLOAD_TO_CLIENT_END------"
 
 function Start-Untgz {
- Param([parameter(Position=0, Mandatory=$True)][String]$TgzFileName,
-       [parameter(Mandatory=$True)][String]$DestFolder)
-    if ($DestFolder) { # had destFolder parameter
-        if (-not (Test-Path $DestFolder)) { # if not exists.
+    Param([parameter(Position = 0, Mandatory = $True)][String]$TgzFileName,
+        [parameter(Mandatory = $True)][String]$DestFolder)
+    if ($DestFolder) {
+        # had destFolder parameter
+        if (-not (Test-Path $DestFolder)) {
+            # if not exists.
             New-Item $DestFolder -ItemType Directory | Out-Null
         }
     }
@@ -20,21 +22,21 @@ function Start-Untgz {
 }
 
 function Write-ReturnToClient {
-    Param([parameter(ValueFromPipeline=$True)]$returnToClient)
+    Param([parameter(ValueFromPipeline = $True)]$returnToClient)
     "`n", $_INSTALL_RESULT_BEGIN_, "`n" | Write-Output
     $returnToClient | ConvertTo-Json -Depth 10
     "`n", $_INSTALL_RESULT_END_, "`n" | Write-Output
 }
 
 function Write-DownloadToClient {
-    Param([parameter(ValueFromPipeline=$True)]$returnToDownload)
+    Param([parameter(ValueFromPipeline = $True)]$returnToDownload)
     "`n", $_DOWNLOAD_BEGIN_, "`n" | Write-Output
     $returnToDownload | ConvertTo-Json -Depth 10
     "`n", $_DOWNLOAD_END_, "`n" | Write-Output
 }
 
 function ConvertFrom-LineBlock {
-    Param([parameter(ValueFromPipeline=$True)]$InputObject, $beginPtn, $endPtn)
+    Param([parameter(ValueFromPipeline = $True)]$InputObject, $beginPtn, $endPtn)
     Begin {
         $totalLines = @()
     }
@@ -63,7 +65,7 @@ function ConvertFrom-LineBlock {
 }
 
 function ConvertFrom-ReturnToClientInstallResult {
-    Param([parameter(ValueFromPipeline=$True)]$InputObject)
+    Param([parameter(ValueFromPipeline = $True)]$InputObject)
     Begin {
         $totalLines = @()
     }
@@ -77,7 +79,7 @@ function ConvertFrom-ReturnToClientInstallResult {
 }
 
 function ConvertFrom-ReturnToClientToDownload {
-    Param([parameter(ValueFromPipeline=$True)]$InputObject)
+    Param([parameter(ValueFromPipeline = $True)]$InputObject)
     Begin {
         $totalLines = @()
     }
@@ -90,7 +92,7 @@ function ConvertFrom-ReturnToClientToDownload {
 }
 
 function Invoke-DfsCmd {
-    Param([string]$hadoopCmd,$dfslines,[string]$user,[string]$group)
+    Param([string]$hadoopCmd, $dfslines, [string]$user, [string]$group)
     $dfslines = $dfslines -split "`n"
     $dfslines = $dfslines | ForEach-Object {$_.Trim()} | ForEach-Object {if ($_ -notmatch "^-") {"-" + $_} else {$_}} | ForEach-Object {"{0} fs {1}" -f $hadoopCmd, $_}
     $dfslines | Write-HostIfInTesting
@@ -98,7 +100,7 @@ function Invoke-DfsCmd {
 }
 
 function ConvertFrom-Base64Parameter {
-    Param([parameter(ValueFromPipeline=$True)][string]$parastr)
+    Param([parameter(ValueFromPipeline = $True)][string]$parastr)
     $mayBeJsonSting = ConvertFrom-Base64String -base64Str $parastr
     try {
         $mayBeJsonSting | ConvertFrom-Json -ErrorAction SilentlyContinue -OutVariable mayBeJson | Out-Null
@@ -111,7 +113,7 @@ function ConvertFrom-Base64Parameter {
 }
 
 function Set-ResultFileItem {
-    Param([parameter(Mandatory=$True)][string]$resultFile,[parameter(Mandatory=$True)][array]$keys, $value)
+    Param([parameter(Mandatory = $True)][string]$resultFile, [parameter(Mandatory = $True)][array]$keys, $value)
     $rh = Get-Content $resultFile | ConvertFrom-Json
     if (!$rh) {
         $rh = New-Object -TypeName psobject
@@ -129,7 +131,8 @@ function Set-ResultFileItem {
                 if ($leaf -isnot [psobject]) {
                     Write-Error "leaf item is not a psobject: $keys"
                 }
-            } else {
+            }
+            else {
                 $o = New-Object -TypeName psobject
                 $parent = $parent | Add-Member -MemberType NoteProperty -Name $k -Value $o -PassThru
                 $leaf = $parent.$k
@@ -142,7 +145,8 @@ function Set-ResultFileItem {
     }
     if ($leaf | Get-Member | Where-Object Name -EQ $lastKey) {
         $leaf.$lastKey = $value
-    } else {
+    }
+    else {
         $leaf | Add-Member -MemberType NoteProperty -Name $lastKey -Value $value
     }
 
@@ -150,7 +154,7 @@ function Set-ResultFileItem {
 }
 
 function ConvertTo-Base64String {
-    Param([parameter(ValueFromPipeline=$True)][string]$str)
+    Param([parameter(ValueFromPipeline = $True)][string]$str)
     Begin {
         $lines = @()
     }
@@ -165,7 +169,7 @@ function ConvertTo-Base64String {
 }
 
 function ConvertFrom-Base64String {
-    Param([parameter(ValueFromPipeline=$True)][string]$base64Str)
+    Param([parameter(ValueFromPipeline = $True)][string]$base64Str)
     $bytes = [System.Convert]::FromBase64String($base64Str)
     [System.Text.Encoding]::ASCII.GetString($bytes)
 }
@@ -175,14 +179,17 @@ function ConvertTo-EscapedQuotationForBashCommandLine {
     $others | Write-Host
     if ($quotaChar -eq "'") {
         if ($quotaInnerQuota) {
-            $others = $others | ForEach-Object {"'" + ($_ -replace "'","'`"'`"'") + "'"}
-        } else {
+            $others = $others | ForEach-Object {"'" + ($_ -replace "'", "'`"'`"'") + "'"}
+        }
+        else {
             $others = $others | ForEach-Object {"'" + $_ + "'"}
         }
-    } elseif ($quotaChar -eq '"') {
+    }
+    elseif ($quotaChar -eq '"') {
         if ($quotaInnerQuota) {
-            $others = $others | ForEach-Object {'"' + ($_ -replace '"',"`"'`"'`"") + '"'}
-        } else {
+            $others = $others | ForEach-Object {'"' + ($_ -replace '"', "`"'`"'`"") + '"'}
+        }
+        else {
             $others = $others | ForEach-Object {'"' + $_ + '"'}
         }
     }
@@ -190,7 +197,7 @@ function ConvertTo-EscapedQuotationForBashCommandLine {
 }
 
 function Write-HostIfInTesting {
-    Param([parameter(ValueFromPipeline=$True)]$messageToWrite)
+    Param([parameter(ValueFromPipeline = $True)]$messageToWrite)
     Process {
         if ($I_AM_IN_TESTING) {
             $messageToWrite | Write-Host
@@ -199,45 +206,46 @@ function Write-HostIfInTesting {
 }
 
 function Write-OutputIfTesting {
-    Param([parameter(ValueFromPipeline=$True)]$messageToWrite)
+    Param([parameter(ValueFromPipeline = $True)]$messageToWrite)
     if ($I_AM_IN_TESTING) {
         $messageToWrite
     }
 }
 
 function Invoke-TclContent {
-    Param([parameter(ValueFromPipeline=$True)]$content,[parameter(ValueFromRemainingArguments=$True)]$others)
+    Param([parameter(ValueFromPipeline = $True)]$content, [parameter(ValueFromRemainingArguments = $True)]$others)
     $tf = (New-TemporaryFile).FullName
     $content | Out-File -FilePath $tf -Encoding ascii
     $others = $others | ForEach-Object {"'" + (ConvertTo-Base64String $_) + "'"}
-    ("tclsh",$tf + $others) -join " " | Write-HostIfInTesting
-    ("tclsh",$tf + $others) -join " " | Invoke-Expression *>&1
+    ("tclsh", $tf + $others) -join " " | Write-HostIfInTesting
+    ("tclsh", $tf + $others) -join " " | Invoke-Expression *>&1
     Remove-Item -Path $tf
 }
 
 function Invoke-BashContent {
-    Param([parameter(ValueFromPipeline=$True)]$content,[parameter(ValueFromRemainingArguments=$True)]$others)
+    Param([parameter(ValueFromPipeline = $True)]$content, [parameter(ValueFromRemainingArguments = $True)]$others)
     $tf = (New-TemporaryFile).FullName
     $content | Out-File -FilePath $tf -Encoding ascii
     $others = $others | ForEach-Object {"'" + (ConvertTo-Base64String $_) + "'"}
-    ("bash",$tf + $others) -join " " | Write-HostIfInTesting
-    ("bash",$tf + $others) -join " " | Invoke-Expression *>&1
+    ("bash", $tf + $others) -join " " | Write-HostIfInTesting
+    ("bash", $tf + $others) -join " " | Invoke-Expression *>&1
     Remove-Item -Path $tf
 }
 
 function Invoke-StringCode {
-    Param([string]$execute, [parameter(ValueFromPipeline=$True)]$content,[string]$quotaChar="'",[switch]$quotaInnerQuota, [string[]]$others)
+    Param([string]$execute, [parameter(ValueFromPipeline = $True)]$content, [string]$quotaChar = "'", [switch]$quotaInnerQuota, [string[]]$others)
     $tf = (New-TemporaryFile).FullName
     $content | Out-File -FilePath $tf -Encoding ascii
     if ($quotaInnerQuota) {
         $others1 = ConvertTo-EscapedQuotationForBashCommandLine -quotaChar $quotaChar -quotaInnerQuota -others $others
-    } else {
+    }
+    else {
         $others1 = ConvertTo-EscapedQuotationForBashCommandLine -quotaChar $quotaChar -others $others
     }
     
     $others1 | Write-Host
-    ($execute,$tf + $others1) -join " " | Write-Host
-    ($execute,$tf + $others1) -join " " | Invoke-Expression
+    ($execute, $tf + $others1) -join " " | Write-Host
+    ($execute, $tf + $others1) -join " " | Invoke-Expression
     Remove-Item -Path $tf
 }
 
@@ -248,7 +256,7 @@ function Test-RunningYum {
 }
 
 function Save-Xml {
-    Param([xml]$doc, $FilePath, $encoding="ascii")
+    Param([xml]$doc, $FilePath, $encoding = "ascii")
     $sw = New-Object System.IO.StringWriter
     $doc.Save($sw)
     $sw.ToString() -replace "utf-16", "utf-8" | Out-File -FilePath $FilePath -Encoding $encoding
@@ -281,10 +289,12 @@ function Add-Lines {
         if ($_ -match $ptn) {
             if (! $after) {
                 @() + $lines + $_
-            } else {
-                ,$_ + $lines
             }
-        } else {
+            else {
+                , $_ + $lines
+            }
+        }
+        else {
             $_
         }
     }
@@ -293,31 +303,32 @@ function Add-Lines {
 }
 
 function New-ExecuteLine {
-    Param([parameter(Mandatory=$True)][String]$runner, [parameter(Mandatory=$True)][String]$envfile, $code)
+    Param([parameter(Mandatory = $True)][String]$runner, [parameter(Mandatory = $True)][String]$envfile, $code)
     if (! $code) {
-        $code = $envfile -replace "\.env$",""
+        $code = $envfile -replace "\.env$", ""
     }
     if ($runner -cmatch "(\{code\}|\{envfile\}|\{action\})") {
-        $r = $runner -replace "\{code\}",$code
-        $r = $r -replace "\{envfile\}",$envfile
-        $r -replace "\{action\}",'$1'
-    } else {
+        $r = $runner -replace "\{code\}", $code
+        $r = $r -replace "\{envfile\}", $envfile
+        $r -replace "\{action\}", '$1'
+    }
+    else {
         $runner, $code, "-envfile", $envfile, "-action", '$1' -join " "
     }
 }
 
 function New-KvFile {
- Param
-     (
-       [parameter(Mandatory=$True)]
-       [String]
-       $FilePath,
-       [parameter(Mandatory=$False)]
-       [String]
-       $commentPattern = "^\s*#.*"
+    Param
+    (
+        [parameter(Mandatory = $True)]
+        [String]
+        $FilePath,
+        [parameter(Mandatory = $False)]
+        [String]
+        $commentPattern = "^\s*#.*"
     )
 
-    $kvf = New-Object -TypeName PSObject -Property @{FilePath=$FilePath;lines=Get-Content $FilePath}
+    $kvf = New-Object -TypeName PSObject -Property @{FilePath = $FilePath; lines = Get-Content $FilePath}
 
     $addKv = {
         param([String]$k, [String]$v)
@@ -325,11 +336,13 @@ function New-KvFile {
         $lines = $this.lines | ForEach-Object {
             if ($done) {
                 $_
-            } else {
+            }
+            else {
                 if (($_ -match "^\s*$k=") -or ($_ -match "${commentPattern}$k=")) {
                     $done = $True
                     "$k=$v"
-                } else {
+                }
+                else {
                     $_
                 }
             }
@@ -342,22 +355,25 @@ function New-KvFile {
 
     $kvf | Add-Member -MemberType ScriptMethod -Name addKv -Value $addKv
 
-     $commentKv = {
+    $commentKv = {
         param([String]$k)
         $done = $False
         $lines = $this.lines | ForEach-Object {
             if ($done) {
                 $_
-            } else {
+            }
+            else {
                 if ($_ -match "^$k=") {
                     $done = $True
                     "#$_"
-                } else {
+                }
+                else {
                     $_
                 }
             }
         }
-        if ($done) { # if changed.
+        if ($done) {
+            # if changed.
             $this.lines = $lines
         }
     }
@@ -365,7 +381,7 @@ function New-KvFile {
     $kvf | Add-Member -MemberType ScriptMethod -Name commentKv -Value $commentKv
 
     $writeToFile = {
-        param([parameter(Position=0,Mandatory=$False)][String]$fileToWrite)
+        param([parameter(Position = 0, Mandatory = $False)][String]$fileToWrite)
         if (!$fileToWrite) {
             $fileToWrite = $this.FilePath
         }
@@ -378,42 +394,44 @@ function New-KvFile {
 # for example, $a.asHt("x.y.z") will convert $a.x.y.z to a hashtable.
 
 function Add-AsHtScriptMethod {
-    Param([parameter(ValueFromPipeline=$True)]$pscustomob)
+    Param([parameter(ValueFromPipeline = $True)]$pscustomob)
     if (!$pscustomob) {
         return
     }
     $pscustomob | Add-Member -MemberType ScriptMethod -Name asHt -Value {
         Param([String]$pn)
         $tob = $this
-        ($pn -split "\W+").ForEach({
-            $tob = $tob.$_
-        })
+        ($pn -split "\W+").ForEach( {
+                $tob = $tob.$_
+            })
         if ($tob -is [PSCustomObject]) {
             $oht = [ordered]@{}
-            $tob.psobject.Properties | Where-Object MemberType -eq "NoteProperty" | ForEach-Object {$oht[$_.name]=$_.value} | Out-Null
+            $tob.psobject.Properties | Where-Object MemberType -eq "NoteProperty" | ForEach-Object {$oht[$_.name] = $_.value} | Out-Null
             $oht
-        } else {
+        }
+        else {
             $tob
         }
     } -PassThru
 }
 
 function Get-RandomPassword {
-    Param([int]$minLength=8,[int]$maxLength=32, [int]$len)
+    Param([int]$minLength = 8, [int]$maxLength = 32, [int]$len)
     if ($len -gt 0) {
         $num = $len
-    } else {
+    }
+    else {
         $num = Get-Random -Minimum $minLength -Maximum $maxLength
     }
-    $tmp= foreach ($i in 1..$num) {
-        $g = ('abcdefghijkmnpqrstuvwxyzABCEFGHJKLMNPQRSTUVWXYZ23456789!"#%&','abcdefghijkmnpqrstuvwxyz', 'ABCEFGHJKLMNPQRSTUVWXYZ', '23456789', '!"#%&+')[(Get-Random 5)]
+    $tmp = foreach ($i in 1..$num) {
+        $g = ('abcdefghijkmnpqrstuvwxyzABCEFGHJKLMNPQRSTUVWXYZ23456789!"#%&', 'abcdefghijkmnpqrstuvwxyz', 'ABCEFGHJKLMNPQRSTUVWXYZ', '23456789', '!"#%&+')[(Get-Random 5)]
         $g[(Get-Random $g.Length)]
     }
     $tmp -join ""
 }
 
 function Get-BoxRoleConfig {
-    Param([parameter(Mandatory=$True)]$myenv,[parameter(ValueFromRemainingArguments)]$remainingArguments)
+    Param([parameter(Mandatory = $True)]$myenv, [parameter(ValueFromRemainingArguments)]$remainingArguments)
     $o = $null
     if ($remainingArguments -and ($remainingArguments.Count -gt 0) -and $myenv.box.boxRoleConfig) {
         foreach ($p in $remainingArguments) {
@@ -427,7 +445,7 @@ function Get-BoxRoleConfig {
 }
 
 function New-EnvForExec {
-    Param([parameter(Mandatory=$True)][String]$envfile)
+    Param([parameter(Mandatory = $True)][String]$envfile)
     $efe = Get-Content $envfile | ConvertFrom-Json
 
     $efe.software.configContent = $efe.software.configContent | ConvertFrom-Json
@@ -439,7 +457,7 @@ function New-EnvForExec {
     }
 
     $efe.software | Add-Member -MemberType ScriptProperty -Name fullName -Value {
-        "{0}-{1}-{2}" -f $this.name,$this.ostype,$this.sversion
+        "{0}-{1}-{2}" -f $this.name, $this.ostype, $this.sversion
     }
 
     if ($efe.boxGroup.installResults | Trim-All) {
@@ -469,16 +487,18 @@ function New-EnvForExec {
 
         $allfns = $this.software.filesToUpload
         if ($allfns) {
-            if($ptn) {
+            if ($ptn) {
                 $fullfn = $allfns | Where-Object {$_ -match $ptn}| Select-Object -First 1
-            } else {
+            }
+            else {
                 $fullfn = $allfns | Select-Object -First 1
             }
             if ($fullfn) {
                 $fn = $fullfn -split "/" | Select-Object -Last 1
                 if ($onlyName) {
                     $fn
-                } else {
+                }
+                else {
                     $this.remoteFolder | Join-Path -ChildPath $fn
                 }
             }
@@ -487,42 +507,43 @@ function New-EnvForExec {
 }
 
 function Get-UploadFiles {
-    Param([parameter(Mandatory=$True)]$myenv,[string]$ptn, [switch]$OnlyName)
+    Param([parameter(Mandatory = $True)]$myenv, [string]$ptn, [switch]$OnlyName)
     $allfns = $myenv.software.filesToUpload
     if ($allfns) {
-        if($ptn) {
+        if ($ptn) {
             $fullfns = $allfns | Where-Object {$_ -match $ptn}
-        } else {
+        }
+        else {
             $fullfns = $allfns
         }
-        $fullfns | ForEach-Object {$_ -split '/' | Select-Object -Last 1} | ForEach-Object {if($OnlyName) {$_} else {$myenv.remoteFolder | Join-Path -ChildPath $_}}
+        $fullfns | ForEach-Object {$_ -split '/' | Select-Object -Last 1} | ForEach-Object {if ($OnlyName) {$_} else {$myenv.remoteFolder | Join-Path -ChildPath $_}}
     }
 }
 
 function New-HostsFile {
- Param
-     (
-       [parameter(Mandatory=$False)]
-       [String]
-       $FilePath = "/etc/hosts"
+    Param
+    (
+        [parameter(Mandatory = $False)]
+        [String]
+        $FilePath = "/etc/hosts"
     )
-    $hf = New-Object -TypeName PSObject -Property @{FilePath=$FilePath;lines=Get-Content $FilePath}
+    $hf = New-Object -TypeName PSObject -Property @{FilePath = $FilePath; lines = Get-Content $FilePath}
 
     $hf | Add-Member -MemberType ScriptMethod -Name addHost -Value {
-        Param([parameter(Mandatory=$True)][String]$ip, [parameter(Mandatory=$True)][String]$hn)
+        Param([parameter(Mandatory = $True)][String]$ip, [parameter(Mandatory = $True)][String]$hn)
         $done = $False
-        $this.lines = $this.lines | Select-Object @{N="parts";E={$_ -split "\s+"}} | Where-Object {$_.parts.Length -gt 0} | ForEach-Object {
-            if($done) {
-               return $_
+        $this.lines = $this.lines | Select-Object @{N = "parts"; E = {$_ -split "\s+"}} | Where-Object {$_.parts.Length -gt 0} | ForEach-Object {
+            if ($done) {
+                return $_
             }
-            if($_.parts[0] -eq $ip) {
-                if ($_.parts -notcontains $hn){
+            if ($_.parts[0] -eq $ip) {
+                if ($_.parts -notcontains $hn) {
                     $_.parts += $hn
                 }
                 $done = $True
             }
             $_
-        } | Select-Object @{N="line"; E={$_.parts -join " "}} | Select-Object -ExpandProperty line
+        } | Select-Object @{N = "line"; E = {$_.parts -join " "}} | Select-Object -ExpandProperty line
         if (!$done) {
             $this.lines += "$ip $hn"
         }
@@ -530,7 +551,7 @@ function New-HostsFile {
     }
 
     $hf | Add-Member -MemberType ScriptMethod -Name writeToFile -Value {
-        Param([parameter(Position=0,Mandatory=$False)][String]$fileToWrite)
+        Param([parameter(Position = 0, Mandatory = $False)][String]$fileToWrite)
         if (!$fileToWrite) {
             $fileToWrite = $this.FilePath
         }
@@ -548,25 +569,29 @@ function New-RandomPassword {
 #>
 
 function Add-SectionKv {
-    Param([parameter(Mandatory=$True)]$parsedSectionFile,[parameter(Mandatory=$True)][string]$section, [parameter(Mandatory=$True)][string]$key, $value)
+    Param([parameter(Mandatory = $True)]$parsedSectionFile, [parameter(Mandatory = $True)][string]$section, [parameter(Mandatory = $True)][string]$key, $value)
     $done = $False
     $blockLines = $parsedSectionFile.blockHt[$section] | ForEach-Object {
         if ($done) {
             $_
-        } else {
+        }
+        else {
             if ($_ -match "${key}=") {
                 $done = $True
                 if ($value) {
                     "${key}=$value"
-                } else {
+                }
+                else {
                     $m = $_ -match "^\s*#+\s*(.*)\s*$"
                     if ($m) {
                         $Matches[1]
-                    } else {
+                    }
+                    else {
                         $_
                     }
                 }
-            } else {
+            }
+            else {
                 $_
             }
         }
@@ -581,16 +606,18 @@ function Add-SectionKv {
 }
 
 function Disable-SectionKeyValue {
-    Param([parameter(Mandatory=$True)]$parsedSectionFile,[parameter(Mandatory=$True)][string]$section, [parameter(Mandatory=$True)][string]$key)
+    Param([parameter(Mandatory = $True)]$parsedSectionFile, [parameter(Mandatory = $True)][string]$section, [parameter(Mandatory = $True)][string]$key)
     $done = $False
     $blockLines = $parsedSectionFile.blockHt[$section] | ForEach-Object {
         if ($done) {
             $_
-        } else {
+        }
+        else {
             if ($_ -match "^\s*${key}=") {
                 $done = $True
                 "#$_"
-            } else {
+            }
+            else {
                 $_
             }
         }
@@ -599,7 +626,7 @@ function Disable-SectionKeyValue {
 }
 
 function Get-SectionValueByKey {
-    Param([parameter(Mandatory=$True)]$parsedSectionFile,[parameter(Mandatory=$True)][string]$section, [parameter(Mandatory=$True)][string]$key)
+    Param([parameter(Mandatory = $True)]$parsedSectionFile, [parameter(Mandatory = $True)][string]$section, [parameter(Mandatory = $True)][string]$key)
     $kv = $parsedSectionFile.blockHt[$section] | Where-Object {$_ -match "^${key}\s*=\s*(.*?)\s*$"} | Select-Object -First 1
     if ($kv) {
         $Matches[1]
@@ -608,17 +635,17 @@ function Get-SectionValueByKey {
 }
 
 function New-SectionKvFile {
- Param
-     (
-       [parameter(Mandatory=$True)]
-       [String]
-       $FilePath,
-       [parameter(Mandatory=$False)]
-       [String]
-       $SectionPattern = "^\[(.*)\]$",
-       [parameter(Mandatory=$False)]
-       [String]
-       $commentPattern = "^#.*"
+    Param
+    (
+        [parameter(Mandatory = $True)]
+        [String]
+        $FilePath,
+        [parameter(Mandatory = $False)]
+        [String]
+        $SectionPattern = "^\[(.*)\]$",
+        [parameter(Mandatory = $False)]
+        [String]
+        $commentPattern = "^#.*"
     )
 
     $prefix = @()
@@ -631,21 +658,24 @@ function New-SectionKvFile {
             if ($_ -match $SectionPattern) {
                 $currentBlock = $Matches[0]
                 $blockHt[$currentBlock] = @()
-            } else {
+            }
+            else {
                 $blockHt[$currentBlock] += $_
             }
-        } else {
+        }
+        else {
             if ($_ -match $SectionPattern) {
                 $blockStart = $True
                 $currentBlock = $Matches[0]
                 $blockHt[$currentBlock] = @()
-            }  else {
+            }
+            else {
                 $prefix += $_
             }
         }
     }
 
-    $skf = New-Object -TypeName PSObject -Property @{FilePath=$FilePath;blockHt=$blockHt;prefix=$prefix}
+    $skf = New-Object -TypeName PSObject -Property @{FilePath = $FilePath; blockHt = $blockHt; prefix = $prefix}
 
     $addKv = {
         param([String]$k, [String]$v, [String]$section)
@@ -653,11 +683,13 @@ function New-SectionKvFile {
         $blockLines = $this.blockHt[$section] | ForEach-Object {
             if ($done) {
                 $_
-            } else {
+            }
+            else {
                 if ($_ -match "$k=") {
                     $done = $True
                     "$k=$v"
-                } else {
+                }
+                else {
                     $_
                 }
             }
@@ -671,22 +703,25 @@ function New-SectionKvFile {
 
     $skf | Add-Member -MemberType ScriptMethod -Name addKv -Value $addKv
 
-     $commentKv = {
+    $commentKv = {
         param([String]$k, [String]$section)
         $done = $False
         $blockLines = $this.blockHt[$section] | ForEach-Object {
             if ($done) {
                 $_
-            } else {
+            }
+            else {
                 if ($_ -match "^$k=") {
                     $done = $True
                     "#$_"
-                } else {
+                }
+                else {
                     $_
                 }
             }
         }
-        if ($done) { # if changed.
+        if ($done) {
+            # if changed.
             $this.blockHt[$section] = $blockLines
         }
     }
@@ -704,15 +739,15 @@ function New-SectionKvFile {
     $skf | Add-Member -MemberType ScriptMethod -Name getValue -Value $getValue
 
     $writeToFile = {
-        param([parameter(Position=0,Mandatory=$False)][String]$fileToWrite)
+        param([parameter(Position = 0, Mandatory = $False)][String]$fileToWrite)
         if (!$fileToWrite) {
             $fileToWrite = $this.FilePath
         }
         $lines = $this.prefix
-        ([HashTable]$this.blockHt).GetEnumerator().ForEach({
-            $lines += $_.Key
-            $lines += $_.Value
-        })
+        ([HashTable]$this.blockHt).GetEnumerator().ForEach( {
+                $lines += $_.Key
+                $lines += $_.Value
+            })
         Set-Content -Path $fileToWrite -Value $lines
     }
 
@@ -722,61 +757,66 @@ function New-SectionKvFile {
 # string utils
 
 function Trim-All {
-    Param([parameter(ValueFromPipeline=$True)][string]$content)
+    Param([parameter(ValueFromPipeline = $True)][string]$content)
     if ($content) {
         $content.Trim()
-    } else {
+    }
+    else {
         ""
     }
 }
 
 function Trim-Start {
-    Param([parameter(ValueFromPipeline=$True)][string]$content)
+    Param([parameter(ValueFromPipeline = $True)][string]$content)
     if ($content) {
         $content.TrimStart()
-    } else {
+    }
+    else {
         ""
     }
 }
 
 function Trim-End {
-    Param([parameter(ValueFromPipeline=$True)][string]$content)
+    Param([parameter(ValueFromPipeline = $True)][string]$content)
     if ($content) {
         $content.TrimEnd()
-    } else {
+    }
+    else {
         ""
     }
 }
 
 function Parse-RunAs {
-    Param([parameter(ValueFromPipeline=$True)][string]$content)
+    Param([parameter(ValueFromPipeline = $True)][string]$content)
     $trimed = $content.Trim()
     if ($trimed) {
         try {
-           $trimed | ConvertFrom-Json -ErrorAction SilentlyContinue -OutVariable mayBeJson | Out-Null
-           $mayBeJson
+            $trimed | ConvertFrom-Json -ErrorAction SilentlyContinue -OutVariable mayBeJson | Out-Null
+            $mayBeJson
         }
         catch {
             $Error.Clear()
             if ($trimed -match ':') {
                 $trimed -split ',' | ForEach-Object -End {$h} -Begin {$h = @{}} -Process {
-                        $a = $_.split(':')
-                        if ($a.length -eq 2) {
-                            $h[$a[0].trim()] = $a[1].trim()
-                        }
+                    $a = $_.split(':')
+                    if ($a.length -eq 2) {
+                        $h[$a[0].trim()] = $a[1].trim()
                     }
-            } else {
+                }
+            }
+            else {
                 $trimed
             }
         }
-    } else {
+    }
+    else {
         ""
     }
 
 }
 
 function Write-TextFile {
-    Param([parameter(ValueFromPipelineByPropertyName=$True)][string]$name, [parameter(ValueFromPipelineByPropertyName=$True)][string]$content, [parameter(ValueFromPipelineByPropertyName=$True)][string]$codeLineSeperator)
+    Param([parameter(ValueFromPipelineByPropertyName = $True)][string]$name, [parameter(ValueFromPipelineByPropertyName = $True)][string]$content, [parameter(ValueFromPipelineByPropertyName = $True)][string]$codeLineSeperator)
     $content -split '\r?\n|\r\n?' | Out-File -FilePath $name -Encoding utf8 -Force
 }
 
@@ -788,52 +828,56 @@ function Write-TextFile {
 # }
 
 function Test-AbsolutePath {
-    Param([parameter(ValueFromPipeline=$True)][string]$Path)
+    Param([parameter(ValueFromPipeline = $True)][string]$Path)
     process {
         [System.IO.Path]::IsPathRooted($Path)
     }
 }
 
 function New-Directory {
-    Param([parameter(ValueFromPipeline=$True)][string]$Path)
+    Param([parameter(ValueFromPipeline = $True)][string]$Path)
     process {
         if (!(Test-Path -PathType Container -Path $Path)) {
             New-Item -Path $Path -ItemType Directory -Force
-        } else {
+        }
+        else {
             $Path
         }
     }
 }
 
 function Select-FirstTrueValue {
-    $args | Where-Object { if($_) {$_}} | Select-Object -First 1
+    $args | Where-Object { if ($_) {$_}} | Select-Object -First 1
 }
 
 function Select-IfElse {
-   Param([parameter(Mandatory=$True)]$condition,[parameter(Position=1)]$onTrue,[parameter(Position=2)]$onFalse)
-   process {
-       if ($condition) {
-        $onTrue
-       } else {
-        $onFalse
-       }
-   }
+    Param([parameter(Mandatory = $True)]$condition, [parameter(Position = 1)]$onTrue, [parameter(Position = 2)]$onFalse)
+    process {
+        if ($condition) {
+            $onTrue
+        }
+        else {
+            $onFalse
+        }
+    }
 }
 
 function Write-SuccessResult {
     if ($Error.Count -gt 0) {
-        $Error | ForEach-Object {$_.ToString(),$_.ScriptStackTrace}
-    } else {
+        $Error | ForEach-Object {$_.ToString(), $_.ScriptStackTrace}
+    }
+    else {
         "`n@@success@@`n"
     }
 }
 
 function Get-CmdTarget {
-    Param([parameter(ValueFromPipeline=$True)][string]$command)
+    Param([parameter(ValueFromPipeline = $True)][string]$command)
     $src = $command | Get-Command | Select-Object -ExpandProperty Source | Get-Item
     if ($src.LinkType -eq "SymbolicLink") {
         $src.Target
-    } else {
+    }
+    else {
         $src
     }
 }
@@ -877,7 +921,8 @@ function Get-HadoopProperty {
     if (! $parent) {
         if ($doc.configuration) {
             $parent = $doc.configuration
-        } else {
+        }
+        else {
             $parent = $doc.DocumentElement
         }
     }
@@ -902,7 +947,8 @@ function Test-HadoopProperty {
     if (! $parent) {
         if ($doc.configuration) {
             $parent = $doc.configuration
-        } else {
+        }
+        else {
             $parent = $doc.DocumentElement
         }
     }
@@ -911,10 +957,12 @@ function Test-HadoopProperty {
     if ($node) {
         if ($node.Value -and $node.Value.trim()) {
             $True
-        } else {
+        }
+        else {
             $False
         }
-    } else {
+    }
+    else {
         $False
     }
 }
@@ -927,18 +975,20 @@ function Set-HadoopProperty {
     if (! $parent) {
         if ($doc.configuration) {
             $parent = $doc.configuration
-        } else {
+        }
+        else {
             $parent = $doc.DocumentElement
         }
     }
 
     # exists item.
-    $node =  $parent.ChildNodes | Where-Object {$_.Name -eq $name} | Select-Object -First 1
+    $node = $parent.ChildNodes | Where-Object {$_.Name -eq $name} | Select-Object -First 1
     if ($node) {
         $node.Name = $name
         $node.Value = $value
         $node.Description = $descprition
-    } else {
+    }
+    else {
         Add-HadoopProperty -doc $doc -parent $parent -name $name -value $value -descprition $descprition
     }
 }
@@ -952,10 +1002,11 @@ function Get-ChainedHashTable {
     $allSize = $all.Count
     if ($allSize -gt 1) {
         $remainder = $all[0..($allSize - 2)]
-    } else {
+    }
+    else {
         $remainder = @()
     }
-    $o =  @{}
+    $o = @{}
     $tmpo = $o
     foreach ($n in $remainder) {
         $tmpo.$n = @{}
