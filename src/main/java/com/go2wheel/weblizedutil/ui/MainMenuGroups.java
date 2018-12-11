@@ -83,7 +83,6 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 	@PostConstruct
 	public void after() {
 		// add groupName to menu-item in application.properties file.
-
 		// menus.groups[0].name=g2
 		// menus.groups[0].order=1000
 		// menus.groups[0].items[0].name=menu.home
@@ -92,7 +91,25 @@ public class MainMenuGroups implements ApplicationContextAware, Cloneable {
 
 		List<KeyValue> groupsIndb = keyValueDbService.findManyByKeyPrefix("menus");
 
-		List<KeyValueProperties> kvl = new KeyValueProperties(groupsIndb, "").getListOfKVP("groups");
+		List<KeyValueProperties> kvl = new KeyValueProperties(groupsIndb, "menus").getListOfKVP("groups");
+		
+		if (kvl.isEmpty()) {
+			try {
+				KeyValue kv = new  KeyValue("menus.groups[0].name", "fixedgroup");
+				keyValueDbService.save(kv);
+				kv = new  KeyValue("menus.groups[0].order", "1000");
+				keyValueDbService.save(kv);
+				kv = new  KeyValue("menus.groups[0].items[0].name", "menu.blog");
+				keyValueDbService.save(kv);
+				kv = new  KeyValue("menus.groups[0].items[0].order", "1");
+				keyValueDbService.save(kv);
+				kv = new  KeyValue("menus.groups[0].items[0].path", "/blog");
+				keyValueDbService.save(kv);
+			} catch (Exception e) {	}
+			groupsIndb = keyValueDbService.findManyByKeyPrefix("menus");
+			kvl = new KeyValueProperties(groupsIndb, "menus").getListOfKVP("groups");
+		}
+		
 
 		this.groups = kvl.stream().map(kvp -> {
 			MainMenuGroup mg = new MainMenuGroup();

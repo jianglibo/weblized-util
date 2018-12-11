@@ -14,15 +14,20 @@ import com.go2wheel.weblizedutil.model.KeyValue;
 
 public class TestKeyValueDbService extends JobBaseFort {
 
+	/**
+	 * save key 'a' and value 'b'
+	 */
 	@Test
 	public void tCreate() {
 		clearDb();
 		KeyValue kv = new  KeyValue("a", "b");
 		kv = keyValueDbService.save(kv);
-		assertThat(kv.getId(), greaterThan(99));
+		assertThat(kv.getId(), greaterThan(0));
 	}
 	
-	
+	/**
+	 * will find a->b and a.b->b
+	 */
 	@Test
 	public void tFindByKeyPrefix() {
 		clearDb();
