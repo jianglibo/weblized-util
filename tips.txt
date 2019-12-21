@@ -12,7 +12,7 @@ netstat -ano | Where-Object {$_ -match '8000'} | ForEach-Object {$_ -split '\s+'
 
 gradle -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=n bootRun
  
-grade bootJar -t
+gradle bootJar -t
 
  
  JLineShellAutoConfiguration hooks all together.
@@ -89,3 +89,16 @@ java -jar .\build\libs\mysql-backup-boot.jar --spring.quartz.job-store-type=memo
 
 netstat -aon | find /i "8000"
 taskkill /PID 24548 /F
+
+jooq generate. 
+must install mysql server.
+create database weblized charset=utf8;
+create database weblizeddev charset=utf8;
+gradle flywayMigrate
+run TestJooqCodegen.java test.
+#gradle bootJar
+gradle packmyzip
+powershll\deploy.ps1
+git rm --cached powershll\deploy.json
+.\powershell\deploy.ps1 Deploy
+my got error message, but it works. /opt/weblized-util/deploys/working.8 failed to connect to server start run: tmux new-sessio -d -s weblized-util /opt/weblized-util/deploys/working/start.sh

@@ -150,9 +150,9 @@ dependencies {
     
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.6'
-}
+// task wrapper(type: Wrapper) {
+//     gradleVersion = '4.6'
+// }
 
 task copyFilesToArchive(type: Copy) {
     from "${buildDir}/../explained.docx", "${buildDir}/../Vagrantfile", "${buildDir}/../start.sh","${buildDir}/../start.bat", "${buildDir}/../stop.bat", "${buildDir}/../killapp.bat", "${buildDir}/../src/main/resources/application.properties"
